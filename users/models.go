@@ -15,8 +15,8 @@ type UserModel struct {
     Photos            []PhotoModel
     MessagesSent      []MessagesSentModel
     MessagesRecieved  []MessagesRecievedModel
-    Followers         []FollowersModel
-    Followings        []FollowingsModel
+    Followers         []FollowingsModel
+    Followees         []FollowingsModel
 }
 
 type PhotoModel struct {
@@ -32,9 +32,8 @@ type MessagesRecievedModel struct {
 }
 
 type FollowersModel struct {
-    FollowersModel messages.MessagesSentModel
-}
-
-type FollowingsModel struct {
-    FollowingsModel messages.MessagesSentModel
+    followerID  UserModel
+    FolloweeID  UserModel
+    Follower    UserModel
+    Followee    UserModel
 }
