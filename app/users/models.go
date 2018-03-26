@@ -1,11 +1,15 @@
 package users
 
+import (
+    "time"
+)
+
 type UserModel struct {
     ID                int
     Username          string
     Hash              byte[]
     Salt              byte[]
-    Gender            string
+
     DateOfBirth       time.time
     CreatedOn         time.time
     LastActive        time.time
