@@ -1,4 +1,4 @@
-INSERT INTO states (name) VALUES
+INSERT INTO users (name) VALUES
 ('California'),
 ('Arizona'),
 ('New York'),
