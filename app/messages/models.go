@@ -1,6 +1,6 @@
 package messages
 
-type MessageModel struct {
+type Message struct {
 	ID          int
 	SenderID    int
 	RecipientID int

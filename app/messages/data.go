@@ -5,7 +5,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func GetUserMssages(db *sql.DB, m Message) (Message, error) {
+func (model *Message) getMessages(db *sql.DB) (Message, error) {
 	rows, err := db.Query(
 		`SELECT *
 		FROM messages
@@ -35,7 +35,7 @@ func GetUserMssages(db *sql.DB, m Message) (Message, error) {
 	return messages, nil
 }
 
-func GetMessage(db *sql.DB, m Message) error {
+func (model *Message) getMessage(db *sql.DB) error {
 	return db.QueryRow(
 		`SELECT *
         FROM messages
@@ -46,7 +46,7 @@ func GetMessage(db *sql.DB, m Message) error {
 		&m.IsRead)
 }
 
-func DeleteMssages(db *sql.DB, m Message) error {
+func (model *Message) sendMssages(db *sql.DB) error {
 
 	if err != nil {
 		return nil, err
@@ -55,11 +55,11 @@ func DeleteMssages(db *sql.DB, m Message) error {
 	return nil
 }
 
-func AddMssages(db *sql.DB, m Message) (Message, error) {
+func (model *Message) deleteMssages(db *sql.DB) error {
 
 	if err != nil {
 		return nil, err
 	}
 
-	return messages, nil
+	return nil
 }

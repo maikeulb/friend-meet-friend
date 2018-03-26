@@ -5,7 +5,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func GetUsers(db *sql.DB, m Message) (Message, error) {
+func (model *User) getUsers(db *sql.DB) (User, error) {
 	rows, err := db.Query(
 		`SELECT *
         FROM messages
@@ -35,9 +35,9 @@ func GetUsers(db *sql.DB, m Message) (Message, error) {
 	return messages, nil
 }
 
-func GetUser(db *sql.DB, m Message) error {
+func (model *User) getProfile(db *sql.DB) (User, error) {
 	return db.QueryRow(
-		`SELECT *
+		`SELECT * // join with followings
                 FROM messages
                 WHERE id=$1`, m.ID).Scan(
 		&m.SenderID,
@@ -46,20 +46,9 @@ func GetUser(db *sql.DB, m Message) error {
 		&m.IsRead)
 }
 
-func GetUserFollowers(db *sql.DB, m Message) error {
+func (model *User) editProfile(db *sql.DB) (User, error) {
 	return db.QueryRow(
-		`SELECT *
-                FROM messages
-                WHERE id=$1`, m.ID).Scan(
-		&m.SenderID,
-		&m.RecipientID,
-		&m.Body,
-		&m.IsRead)
-}
-
-func GetUserFollowings(db *sql.DB, m Message) error {
-	return db.QueryRow(
-		`SELECT *
+		`SELECT * // join with followings
                 FROM messages
                 WHERE id=$1`, m.ID).Scan(
 		&m.SenderID,

@@ -13,7 +13,7 @@ import (
 func GetUserProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	users, err := GetUsers(db)
+	users, err := u.getUsers(db)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -31,7 +31,7 @@ func GetUserProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile, err := GetProfile(db, userID)
+	profile, err := u.getProfile(db, userID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -40,11 +40,11 @@ func GetUserProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, users)
 }
 
-func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func GetMine(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	u := User{ID: id}
-	if err := GetMine(db, u); err != nil {
+	if err := u.getProfile(db, u); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "User not found")
@@ -67,7 +67,7 @@ func EditMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := EditProfile(db, u); err != nil {
+	if err := u.editProfile(db, u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

@@ -18,8 +18,8 @@ func GetMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid message ID")
 		return
 	}
-
-	messages, err := GetMessages(db, start, count, sid)
+    var m []Message
+	messages, err := m.getMessages(db)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -36,8 +36,9 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    var m Message
 	m := Message{ID: id}
-	if err := GetMessage(db, m); err != nil {
+	if err := m.getMessage(db); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Message not found")
@@ -60,7 +61,7 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := CreateMessage(db, m); err != nil {
+	if err := m.sendMessage(db); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -77,7 +78,7 @@ func DeleteMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := Message{ID: id}
-	if err := DeleteMessage(db, m); err != nil {
+	if err := m.deleteMessage(db); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
