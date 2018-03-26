@@ -5,7 +5,7 @@ type MessageModel struct {
 	SenderID    int
 	RecipientID int
 	Body        string
-	IsRead      bool
+	timestamp   time.time
 	Sender      MessageUserModel
 	Recipient   MessageUserModel
 }
@@ -13,4 +13,3 @@ type MessageModel struct {
 type MessageUserModel struct {
 	UserModel users.UserModel
 }
-

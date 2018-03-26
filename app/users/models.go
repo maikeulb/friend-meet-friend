@@ -36,3 +36,10 @@ type FollowersModel struct {
     Follower    UserModel
     Followee    UserModel
 }
+
+
+// posts
+// followed
+// messagesSent
+// messagesReceived
+// notifications
