@@ -1,7 +1,7 @@
 package users
 
 type UserModel struct {
-	ID                int    
+    ID                int
     Username          string
     Hash              byte[]
     Salt              byte[]
@@ -12,15 +12,10 @@ type UserModel struct {
     Bio               string
     Interests         string
     Neighborhood      string
-    Photos            []PhotoModel
     MessagesSent      []MessagesSentModel
     MessagesRecieved  []MessagesRecievedModel
     Followers         []FollowingsModel
     Followees         []FollowingsModel
-}
-
-type PhotoModel struct {
-    PhotoModel photos.PhotoModel
 }
 
 type MessagesSentModel struct {
