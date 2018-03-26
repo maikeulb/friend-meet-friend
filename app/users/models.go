@@ -4,7 +4,7 @@ import (
     "time"
 )
 
-type UserModel struct {
+type User struct {
     ID                int
     Username          string
     PasswordHash      byte[]
@@ -14,23 +14,17 @@ type UserModel struct {
     Bio               string
     Interests         string
     Neighborhood      string
-    MessagesSent      []MessagesSentModel
-    MessagesRecieved  []MessagesRecievedModel
-    Followers         []FollowingsModel
-    Followees         []FollowingsModel
+    MessagesSent      []MessagesSent
+    MessagesRecieved  []MessagesRecieved
+    Followers         []Followings
+    Followees         []Followings
 }
 
-type MessagesSentModel struct {
-    MessagesSent messages.MessagesSentModel
+type MessagesSent struct {
+    MessagesSent messages.MessagesSent
 }
 
-type MessagesRecievedModel struct {
-    MessagesRecievedModel messages.MessagesSentModel
+type MessagesRecieved struct {
+    MessagesRecieved messages.MessagesSent
 }
 
-type FollowersModel struct {
-    FollowerID  UserModel
-    FolloweeID  UserModel
-    Follower    UserModel
-    Followee    UserModel
-}

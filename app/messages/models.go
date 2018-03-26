@@ -6,10 +6,10 @@ type Message struct {
 	RecipientID int
 	Body        string
 	timestamp   time.time
-	Sender      MessageUserModel
-	Recipient   MessageUserModel
+	Sender      MessageUser
+	Recipient   MessageUser
 }
 
-type MessageUserModel struct {
-	UserModel users.UserModel
+type MessageUser struct {
+	User users.User
 }

@@ -56,21 +56,3 @@ func (model *User) editProfile(db *sql.DB) (User, error) {
 		&m.Body,
 		&m.IsRead)
 }
-
-func AddFollowing(db *sql.DB, m Message) error {
-
-	if err != nil {
-		return nil, err
-	}
-
-	return nil
-}
-
-func RemoveFollowing(db *sql.DB, m Message) error {
-
-	if err != nil {
-		return nil, err
-	}
-
-	return nil
-}

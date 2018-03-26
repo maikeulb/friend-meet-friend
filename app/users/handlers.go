@@ -44,7 +44,7 @@ func GetMine(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	u := User{ID: id}
-	if err := u.getProfile(db, u); err != nil {
+	if err := u.getProfile(db); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "User not found")
