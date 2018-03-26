@@ -7,10 +7,8 @@ import (
 type UserModel struct {
     ID                int
     Username          string
-    Hash              byte[]
-    Salt              byte[]
-
-    DateOfBirth       time.time
+    PasswordHash      byte[]
+    PasswordSalt      byte[]
     CreatedOn         time.time
     LastActive        time.time
     Bio               string
@@ -31,15 +29,8 @@ type MessagesRecievedModel struct {
 }
 
 type FollowersModel struct {
-    followerID  UserModel
+    FollowerID  UserModel
     FolloweeID  UserModel
     Follower    UserModel
     Followee    UserModel
 }
-
-
-// posts
-// followed
-// messagesSent
-// messagesReceived
-// notifications

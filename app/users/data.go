@@ -68,17 +68,6 @@ func GetUserFollowings(db *sql.DB, m Message) error {
 		&m.IsRead)
 }
 
-func GetUserNotifications(db *sql.DB, m Message) error {
-	return db.QueryRow(
-		`SELECT *
-                FROM messages
-                WHERE id=$1`, m.ID).Scan(
-		&m.SenderID,
-		&m.RecipientID,
-		&m.Body,
-		&m.IsRead)
-}
-
 func AddFollowing(db *sql.DB, m Message) error {
 
 	if err != nil {
