@@ -13,3 +13,4 @@ type MessageModel struct {
 type MessageUserModel struct {
 	UserModel users.UserModel
 }
+
