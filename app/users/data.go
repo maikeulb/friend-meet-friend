@@ -6,12 +6,24 @@ import (
 )
 
 func (model *User) getUsers(db *sql.DB) (User, error) {
-	rows, err := db.Query(
-		`SELECT u.id, u.username, u.last_active, f.follower_id, f.followee_id
-        FROM users
-        INNER JOIN followings 
-        ON m.sender_id = u.id`)
+	query := `
+        SELECT u.id,
+            u.username,
+            u.last_active,
+            f.follower_id,
+            f.followed_id
+            u2.username,
+            u3.username
+        FROM users as u
+            INNER JOIN followings as f
+            ON u.id = f.follower_id
+            OR u.id = f.followed_id
+            INNER JOIN users as u2
+            ON u2.id = f.follower_id
+            INNER JOIN users as u3
+            ON u3.id = f.followed_id`
 
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -35,11 +47,28 @@ func (model *User) getUsers(db *sql.DB) (User, error) {
 }
 
 func (model *User) getProfile(db *sql.DB) (User, error) {
-	return db.QueryRow(
-		`SELECT u.id, u.username, u.last_active, u.bio, u.created_on, f.followr_id, f.followee_id
-                FROM users
-                INNER JOIN followings
-                WHERE id=$1`, m.ID).Scan(
+
+	query := `
+        SELECT u.id,
+            u.username,
+            u.last_active,
+            u.bio,
+            u.created_on,
+            f.follower_id,
+            f.followed_id,
+            u2.username,
+            u3.username
+        FROM users u
+            INNER JOIN followings as f
+            ON u.id = f.follower_id
+            OR u.id = f.followed_id
+            INNER JOIN users as u2
+            ON u2.id = f.follower_id
+            INNER JOIN users as u3
+            ON u3.id = f.followed_id
+        WHERE id=$1`
+
+	return db.QueryRow(query, m.ID).Scan(
 		&m.ID,
 		&m.Username,
 		&m.Bio,
@@ -48,10 +77,29 @@ func (model *User) getProfile(db *sql.DB) (User, error) {
 }
 
 func (model *User) editProfile(db *sql.DB) (User, error) {
-	return db.QueryRow(
-		`SELECT * // join with followings
-                FROM messages
-                WHERE id=$1`, m.ID).Scan(
+
+	query := `
+
+        SELECT u.id,
+            u.username,
+            u.last_active,
+            u.bio,
+            u.created_on,
+            f.follower_id,
+            f.followed_id,
+            u2.username,
+            u3.username
+        FROM users u
+            INNER JOIN followings as f
+            ON u.id = f.follower_id
+            OR u.id = f.followed_id
+            INNER JOIN users as u2
+            ON u2.id = f.follower_id
+            INNER JOIN users as u3
+            ON u3.id = f.followed_id
+        WHERE id=$1`
+
+	return db.QueryRow(query, m.ID).Scan(
 		&m.SenderID,
 		&m.RecipientID,
 		&m.Body,
