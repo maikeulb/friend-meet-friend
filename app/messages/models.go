@@ -5,7 +5,7 @@ type MessageModel struct {
 	SenderID    int
 	RecipientID int
 	Body        string
-	IsRead      bool // can be improved
+	IsRead      bool
 	Sender      MessageUserModel
 	Recipient   MessageUserModel
 }

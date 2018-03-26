@@ -1,7 +1,7 @@
 package users
 
 type UserModel struct {
-    ID                int
+	ID                int    
     Username          string
     Hash              byte[]
     Salt              byte[]
