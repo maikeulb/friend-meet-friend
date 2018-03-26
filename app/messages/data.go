@@ -6,14 +6,16 @@ import (
 )
 
 func (model *Message) getSentMessages(db *sql.DB) (Message, error) {
-	rows, err := db.Query(
-		`SELECT m.id, m.body, m.timestamp, u.username, u.id
-        FROM messages
-        INNER JOIN users 
-        ON m.sender_id = u.id
+	query := `
+        SELECT m.id, m.body, m.timestamp, u.username, u.id
+        FROM messages as m
+            INNER JOIN users as u
+            ON m.recipient_id = u.id
         WHERE m.sender_id = $1
-        ORDERBY m.timestamp;`,
-		m.userID)
+        ORDER BY m.timestamp;
+    `
+
+	rows, err := db.Query(query, m.userID)
 
 	if err != nil {
 		return nil, err
@@ -39,14 +41,17 @@ func (model *Message) getSentMessages(db *sql.DB) (Message, error) {
 }
 
 func (model *Message) getRecievedMessages(db *sql.DB) (Message, error) {
-	rows, err := db.Query(
-		`SELECT m.id, m.body, m.timestamp, u.username, u.id 
-		 FROM messages
-         INNER JOIN users
-         ON m.recipient_id = u.id
-	     WHERE m.recipient_id = $1
-		 ORDERBY m.timestamp`,
-		m.userID)
+
+	query := `
+        SELECT m.id, m.body, m.timestamp, u.username, u.id
+        FROM messages
+            INNER JOIN users
+            ON m.sender_id = u.id
+        WHERE m.recipient_id = $1
+        ORDER BY m.timestamp
+        `
+
+	rows, err := db.Query(query, m.userID)
 
 	if err != nil {
 		return nil, err
@@ -72,11 +77,15 @@ func (model *Message) getRecievedMessages(db *sql.DB) (Message, error) {
 }
 
 func (model *Message) getMessage(db *sql.DB) error {
-	return db.QueryRow(
-		`SELECT m.id, m.body, m.timestamp, u.username, u.id
+
+	query := `
+        SELECT m.id, m.body, m.timestamp, u.username, u.id
         FROM messages
-        WHERE id = $1`,
-		m.ID).Scan(
+            INNER JOIN users
+            ON m.sender_id = u.id
+        WHERE m.id = $1`
+
+	return db.QueryRow(query, m.ID).Scan(
 		&m.SenderID,
 		&m.RecipientID,
 		&m.Body)
