@@ -2,17 +2,17 @@ CREATE TABLE users (
     id serial PRIMARY KEY,
     username varchar(50) NOT NULL,
     email varchar(50) NOT NULL,
-    password_hash bytea NOT NULL,
-    password_salt bytea(50) NOT NULL,
+    password_hash bytea NULL,
+    password_salt bytea NULL,
     bio TEXT NOT NULL,
-    created_on timestamp NOT NULL,
-    last_active timestamp NOT NULL
+    created_on timestamp NULL,
+    last_active timestamp NULL
 );
 
 CREATE TABLE messages (
     id serial PRIMARY KEY,
-    body integer NOT NULL,
-    timestamp timestamp NOT NULL,
+    body TEXT NOT NULL,
+    timestamp timestamp NULL,
     sender_id integer NOT NULL,
     recipient_id integer NULL
 );
@@ -20,7 +20,7 @@ CREATE TABLE messages (
 CREATE TABLE followings (
     follower_id integer NOT NULL,
     followed_id integer NOT NULL,
-    PRIMARY KEY (follower_id, follower_id)
+    PRIMARY KEY (follower_id, followed_id)
 );
 
 ALTER TABLE messages
