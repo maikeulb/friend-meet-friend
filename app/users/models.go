@@ -12,8 +12,8 @@ type User struct {
     CreatedOn         time.time
     LastActive        time.time
     Bio               string
-    Interests         string
-    Neighborhood      string
+    // Interests         string
+    // Neighborhood      string
     MessagesSent      []MessagesSent
     MessagesRecieved  []MessagesRecieved
     Followers         []Followings
