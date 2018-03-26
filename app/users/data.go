@@ -2,6 +2,7 @@ package users
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 )
 
@@ -24,8 +25,9 @@ func (model *User) getUsers(db *sql.DB) (User, error) {
             ON u3.id = f.followed_id`
 
 	rows, err := db.Query(query)
+
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	defer rows.Close()
@@ -38,7 +40,7 @@ func (model *User) getUsers(db *sql.DB) (User, error) {
 			&u.ID,
 			&u.Username,
 			&u.LastActive); err != nil {
-			return nil, err
+			log.Fatal(err)
 		}
 		users = append(users, u)
 	}
@@ -68,12 +70,22 @@ func (model *User) getProfile(db *sql.DB) (User, error) {
             ON u3.id = f.followed_id
         WHERE id=$1`
 
-	return db.QueryRow(query, m.ID).Scan(
+	rows, err := db.QueryRow(query, m.ID).Scan(
 		&m.ID,
 		&m.Username,
 		&m.Bio,
 		&m.CreatedOn,
 		&m.LastActive)
+
+	if err == sql.ErrNoRows {
+		log.Printf("No users")
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return rows
 }
 
 func (model *User) editProfile(db *sql.DB) (User, error) {
@@ -104,4 +116,12 @@ func (model *User) editProfile(db *sql.DB) (User, error) {
 		&m.RecipientID,
 		&m.Body,
 		&m.IsRead)
+
+	if err == sql.ErrNoRows {
+		log.Printf("No users")
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
