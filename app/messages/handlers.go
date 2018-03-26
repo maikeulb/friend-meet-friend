@@ -36,8 +36,8 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := models.Message{ID: id}
-	if err := data.GetMessage(db, m); err != nil {
+	m := Message{ID: id}
+	if err := GetMessage(db, m); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Message not found")
@@ -60,7 +60,7 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := data.CreateMessage(db, m); err != nil {
+	if err := CreateMessage(db, m); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -76,8 +76,8 @@ func DeleteMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := models.Message{ID: id}
-	if err := data.DeleteMessage(db, m); err != nil {
+	m := Message{ID: id}
+	if err := DeleteMessage(db, m); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
