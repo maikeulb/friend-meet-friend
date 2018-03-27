@@ -51,6 +51,8 @@ type MessageResponse struct {
 	RecipientID int       `json:"recipientId"`
 	Body        string    `json:"body"`
 	Timestamp   time.time `json:"timstamp"`
+	Sender      MessageSenderResponse
+	Recipient   MessageRecipientResponse
 }
 
 func Response(m Message) MessageResponse {
@@ -59,8 +61,20 @@ func Response(m Message) MessageResponse {
 	jm.RecipientID = m.RecipientID
 	jm.Body = m.Body
 	jm.Timestamp = m.Timestamp
+	jm.Sender = m.Sender
+	jm.Recipient = m.Recipient
 
 	return jm
+}
+
+type MessageSenderResponse struct {
+	ID       int    `json:"id"`
+	Username string `json:username"`
+}
+
+type MessageRecipientResponse struct {
+	ID       int    `json:"id"`
+	Username string `json:username"`
 }
 
 func (m Message) MarshalJSON() ([]byte, error) {
@@ -71,7 +85,7 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 	var jm MessageRequest
 
 	if err := json.Unmarshal(data, &jm); err != nil {
-		return err // panic?
+		return err
 	}
 	if err := jm.validate(); err != nil {
 		return err

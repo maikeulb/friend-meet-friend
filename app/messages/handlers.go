@@ -26,9 +26,6 @@ func GetMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    //serializes  via marshalll behind the scenes
-    //analagous to taking ARticleSerializer taking articleModel
-
     respondWithJSON(w, http.StatusOK, messages)
 }
 
