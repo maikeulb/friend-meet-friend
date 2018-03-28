@@ -5,16 +5,17 @@ CREATE TABLE users (
     password_hash bytea NULL,
     password_salt bytea NULL,
     bio TEXT NOT NULL,
-    created_on timestamp NULL,
-    last_active timestamp NULL
+    interests TEXT NOT NULL,
+    created_on timestamp NOT NULL,
+    last_active timestamp NOT NULL
 );
 
 CREATE TABLE messages (
     id serial PRIMARY KEY,
     body TEXT NOT NULL,
-    timestamp timestamp NULL,
+    timestamp timestamp NOT NULL,
     sender_id integer NOT NULL,
-    recipient_id integer NULL
+    recipient_id integer NOT NULL
 );
 
 CREATE TABLE followings (
