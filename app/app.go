@@ -32,20 +32,26 @@ func (a *App) Initialize(host, port, user, password, dbname string) {
 
 func (a *App) Run(addr string) {
 	fmt.Println("Listening on port: 5000")
+	fmt.Println("/api/messages/")
 	fmt.Println("/api/messages/sent")
 	fmt.Println("/api/messages/received")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/api/messages", a.GetMessage).Methods("GET")
 	a.Router.HandleFunc("/api/messages/sent", a.GetSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/messages/recieved", a.GetRecievedMessages).Methods("GET")
 }
 
 func (a *App) GetSentMessages(w http.ResponseWriter, r *http.Request) {
-	messages.GetSentMessages(a.DB, w, r)
+	messages.GetSentMessages(a.DB, w, r) // consider squashing sent and recieved to one urla nd adding a filter
 }
 
 func (a *App) GetRecievedMessages(w http.ResponseWriter, r *http.Request) {
 	messages.GetRecievedMessages(a.DB, w, r)
+}
+
+func (a *App) GetMessage(w http.ResponseWriter, r *http.Request) {
+	messages.GetMessage(a.DB, w, r)
 }

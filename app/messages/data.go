@@ -7,12 +7,16 @@ import (
 
 func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, error) {
 	query := `
-    SELECT m.id, m.body, m.timestamp, u.id, u.username
-    FROM messages as m
-    INNER JOIN users as u
-    ON m.recipient_id = u.id
-    WHERE m.sender_id = $1
-    ORDER BY m.timestamp;
+        SELECT m.id, 
+            m.body, 
+            m.timestamp, 
+            u.id, 
+            u.username
+        FROM messages as m
+            INNER JOIN users as u
+            ON m.recipient_id = u.id
+        WHERE m.sender_id = $1
+        ORDER BY m.timestamp;
     `
 
 	rows, err := db.Query(query, 1)
@@ -44,11 +48,15 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
 func GetRecievedMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, error) {
 
 	query := `
-        SELECT m.id, m.body, m.timestamp, u.id, u.username
+        SELECT m.id, 
+            m.body, 
+            m.timestamp, 
+            u.id, 
+            u.username
         FROM messages as m
         INNER JOIN users as u
-        ON m.sender_id = u.id
-        WHERE m.recipient_id = $1
+            ON m.sender_id = u.id
+            WHERE m.recipient_id = $1
         ORDER BY m.timestamp
         `
 
@@ -78,20 +86,32 @@ func GetRecievedMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Messag
 	return messages, nil
 }
 
-// func GetMessage(db *sql.DB, m Message) error {
+func GetMessageForUser(db *sql.DB, m *Message, id int) error {
 
-//  query := `
-//         SELECT m.id, m.body, m.timestamp, u.username, u.id
-//         FROM messages
-//             INNER JOIN users
-//             ON m.sender_id = u.id
-//         WHERE m.id = $1`
+	query := `
+        SELECT m.id, 
+            m.body, 
+            m.timestamp,
+            u.id,
+            u.username,
+            u2.id,
+            u2.username
+        FROM messages as m
+            INNER JOIN users as u
+            ON m.recipient_id = u.id
+            INNER JOIN users as u2
+            ON m.sender_id = u2.id
+        WHERE m.id = $1 and m.sender_id = 1`
 
-//  return db.QueryRow(query, m.ID).Scan(
-//      &m.SenderID,
-//      &m.RecipientID,
-//      &m.Body)
-// }
+	return db.QueryRow(query, 1).Scan( // should I check error?
+		&m.ID,
+		&m.Body,
+		&m.Timestamp,
+		&m.Recipient.ID,
+		&m.Recipient.Username,
+		&m.Sender.ID,
+		&m.Sender.Username)
+}
 
 // func SendMssages(db *sql.DB, m Message) error {
 

@@ -15,8 +15,8 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// sid, err := strconv.Atoi(vars["userid"])
 
 	// if err != nil {
-	// 	respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-	// 	return
+	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
+	//  return
 	// }
 
 	var m []*Message
@@ -52,14 +52,18 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, messages)
 }
 
-// func messageHandler(w http.ResponseWriter, r *http.Request) {
+func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
-//     if err := json.NewDecoder(r.Body).Decode(s); err != nil { // decode body to message object
-//         respondWithError(w, http.StatusInternalServerError, err.Error())
-//     } else {
-//         respondWithJSON(w, http.StatusOK, s)
-//     }
-// }
+	// m := *Message{ID: 1}
+	var m Message
+	if err := GetMessageForUser(db, &m, 1); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, m)
+	return
+}
 
 // func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //     vars := mux.Vars(r)
