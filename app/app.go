@@ -32,14 +32,14 @@ func (a *App) Initialize(host, port, user, password, dbname string) {
 
 func (a *App) Run(addr string) {
 	fmt.Println("Listening on port: 5000")
-	fmt.Println("/api/messages/")
+	fmt.Println("/api/messages/{id}")
 	fmt.Println("/api/messages/sent")
 	fmt.Println("/api/messages/received")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/api/messages", a.GetMessage).Methods("GET")
+	a.Router.HandleFunc("/api/messages/{id:[0-9]+}", a.GetMessage).Methods("GET")
 	a.Router.HandleFunc("/api/messages/sent", a.GetSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/messages/recieved", a.GetRecievedMessages).Methods("GET")
 }

@@ -4,41 +4,22 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	// "strconv"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
 //set a flag
 func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// sid, err := strconv.Atoi(vars["userid"])
-
+	userID := 2 // get from context
 	// if err != nil {
 	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
 	//  return
 	// }
 
 	var m []*Message
-	messages, err := GetSentMessagesForUser(db, m, 2)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, messages)
-}
-
-func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// id, err := strconv.Atoi(vars["id"])
-	// if err != nil {
-	// respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-	// return
-	// }
-
-	var m []*Message
-	messages, err := GetRecievedMessagesForUser(db, m, 2)
+	messages, err := GetSentMessagesForUser(db, m, userID)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -52,11 +33,36 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, messages)
 }
 
+func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	userID := 2 // get from context
+
+	var m []*Message
+	messages, err := GetRecievedMessagesForUser(db, m, userID)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "No messages found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	respondWithJSON(w, http.StatusOK, messages)
+}
+
 func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	userID := 2 // get from context
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Message ID")
+		return
+	}
 
 	// m := *Message{ID: 1}
-	var m Message
-	if err := GetMessageForUser(db, &m, 1); err != nil {
+	m := Message{ID: id}
+	// var m Message
+	if err := GetMessageForUser(db, &m, userID); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -82,6 +88,7 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 //     func DeleteMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //         vars := mux.Vars(r)
+
 //         id, err := strconv.Atoi(vars["id"])
 //         if err != nil {
 //             respondWithError(w, http.StatusBadRequest, "Invalid Message ID")
