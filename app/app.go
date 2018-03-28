@@ -1,18 +1,43 @@
-package main
+package app
 
 import (
-	"github.com/maikeulb/friend-meet-friend/app"
-	"os"
+	"database/sql"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/maikeulb/friend_meet_friend/app/messages"
 )
 
-func main() {
-	a := app.App{}
-	a.Initialize(
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_DB"))
+type App struct {
+	Router *mux.Router
+	DB     *sql.DB
+}
 
-	a.Run(":5000")
+func (a *App) Initialize(host, port, user, password, dbname string) {
+	connectionString :=
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			host, port, user, password, dbname)
+
+	var err error
+	a.DB, err = sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+}
+
+func (a *App) Run(addr string) {
+	log.Fatal(http.ListenAndServe(addr, a.Router))
+}
+
+func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/api/messages", a.GetMessages).Methods("GET")
+}
+
+func (a *App) GetMessages(w http.ResponseWriter, r *http.Request) {
+	messages.Getmessages(a.DB, w, r)
 }
