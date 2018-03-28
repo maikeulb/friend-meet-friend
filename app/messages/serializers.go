@@ -6,10 +6,10 @@ import (
 )
 
 type MessageRequest struct {
-	SenderID    int       `json:"senderID"`
-	RecipientID int       `json:"recipientID"`
-	Body        string    `json:"body"`
-	Timestamp   time.Time `json:"timestamp"`
+	SenderID    int       `json:"senderID,omitempty"`
+	RecipientID int       `json:"recipientID,omitempty"`
+	Body        string    `json:"body,omitempty"`
+	Timestamp   time.Time `json:"timestamp,omitempty"`
 }
 
 func (jm MessageRequest) Message() Message {
@@ -37,18 +37,14 @@ func (jm *MessageRequest) validate() error {
 }
 
 type MessageResponse struct {
-	ID          int       `json:"id"`
-	SenderID    int       `json:"senderId"`
-	RecipientID int       `json:"recipientId"`
-	Body        string    `json:"body"`
-	Timestamp   time.Time `json:"timstamp"`
-	Sender      MessageSenderResponse
-	Recipient   MessageRecipientResponse
+	ID          int                      `json:"id,omitempty"`
+	SenderID    int                      `json:"senderId,omitempty"`
+	RecipientID int                      `json:"recipientId,omitempty"`
+	Body        string                   `json:"body,omitempty"`
+	Timestamp   time.Time                `json:"timstamp,omitempty"`
+	Sender      MessageSenderResponse    `json:"sender,omitempty"`
+	Recipient   MessageRecipientResponse `json:"recipient,omitempty"`
 }
-
-// func (m Message) MarshalJSON() ([]byte, error) {
-// 	return json.Marshal(MessageResponse(m))
-// }
 
 func Response(m Message) MessageResponse {
 	var jm MessageResponse
@@ -65,11 +61,11 @@ func Response(m Message) MessageResponse {
 }
 
 type MessageSenderResponse struct {
-	ID       int    `json:"id"`
-	Username string `json:username"`
+	ID       int    `json:"id,omitempty"`
+	Username string `json:"username,omitempty"`
 }
 
 type MessageRecipientResponse struct {
-	ID       int    `json:"id"`
-	Username string `json:username"`
+	ID       int    `json:"id,omitempty"`
+	Username string `json:"username,omitempty"`
 }

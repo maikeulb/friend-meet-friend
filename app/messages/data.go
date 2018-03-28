@@ -7,7 +7,7 @@ import (
 
 func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, error) {
 	query := `
-    SELECT m.id, m.body, m.recipient_id, u.id
+    SELECT m.id, m.body, m.timestamp, u.id, u.username
     FROM messages as m
     INNER JOIN users as u
     ON m.recipient_id = u.id
@@ -30,8 +30,9 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
-			&m.RecipientID,
-			&m.Sender.ID); err != nil {
+			&m.Timestamp,
+			&m.Recipient.ID,
+			&m.Recipient.Username); err != nil {
 			return nil, err
 		}
 		messages = append(messages, m)

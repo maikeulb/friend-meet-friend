@@ -4,8 +4,8 @@ CREATE TABLE users (
     email varchar(50) NOT NULL,
     password_hash bytea NULL,
     password_salt bytea NULL,
-    bio TEXT NOT NULL,
     interests TEXT NOT NULL,
+    borough varchar(50) NOT NULL,
     created_on timestamp NOT NULL,
     last_active timestamp NOT NULL
 );

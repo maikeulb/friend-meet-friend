@@ -20,7 +20,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// }
 
 	var m []*Message
-	messages, err := GetSentMessagesForUser(db, m, 1)
+	messages, err := GetSentMessagesForUser(db, m, 2)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

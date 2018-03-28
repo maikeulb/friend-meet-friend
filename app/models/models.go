@@ -6,15 +6,15 @@ import (
 )
 
 type User struct {
-	ID       int
-	Username string
-	// PasswordHash      byte[]
-	// PasswordSalt      byte[]
-	CreatedOn  time.Time
-	LastActive time.Time
-	Bio        string
-	// Interests         string
-	// Neighborhood      string
+	ID               int
+	Username         string
+	Email            string
+	// PasswordHash     []byte
+	// PasswordSalt     []byte
+	Bio              string
+	Neighborhood     string
+	CreatedOn        time.Time
+	LastActive       time.Time
 	MessagesSent     []MessagesSent
 	MessagesRecieved []MessagesRecieved
 	Followers        []UserFollowers
