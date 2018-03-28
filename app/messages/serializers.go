@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
 type MessageRequest struct {
@@ -18,8 +20,8 @@ type MessageRequest struct {
 	Timestamp   time.time `json:"timestamp"`
 }
 
-func (jm MessageRequest) Message() Message {
-	var m Message
+func (jm MessageRequest) Message() models.Message {
+	var m models.Message
 	m.SenderID = jm.SenderID
 	m.RecipientID = jm.RecipientID
 	m.Body = jm.Body
@@ -55,7 +57,7 @@ type MessageResponse struct {
 	Recipient   MessageRecipientResponse
 }
 
-func Response(m Message) MessageResponse {
+func Response(m models.Message) MessageResponse {
 	var jm MessageResponse
 	jm.SenderID = m.SenderID
 	jm.RecipientID = m.RecipientID
@@ -77,11 +79,11 @@ type MessageRecipientResponse struct {
 	Username string `json:username"`
 }
 
-func (m Message) MarshalJSON() ([]byte, error) {
+func (m models.Message) MarshalJSON() ([]byte, error) {
 	return json.Marshal(MessageResonse(m))
 }
 
-func (m *Message) UnmarshalJSON(data []byte) error {
+func (m *models.Message) UnmarshalJSON(data []byte) error {
 	var jm MessageRequest
 
 	if err := json.Unmarshal(data, &jm); err != nil {

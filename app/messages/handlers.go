@@ -8,9 +8,11 @@ import (
 
     "github.com/gorilla/mux"
     _ "github.com/lib/pq"
-)
 
-func GetMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	"github.com/maikeulb/friend-meet-friend/app/models"
+)
+//set a flag
+func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     sid, err := strconv.Atoi(vars["userid"])
 
@@ -19,8 +21,9 @@ func GetMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var m []Message
-    messages, err := m.getMessages(db)
+    var m []models.Message
+    m.ID = 1
+    messages, err := m.getSentMessages(db)
     if err != nil {
         respondWithError(w, http.StatusInternalServerError, err.Error())
         return
@@ -29,7 +32,7 @@ func GetMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     respondWithJSON(w, http.StatusOK, messages)
 }
 
-func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func GetRecievedMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id, err := strconv.Atoi(vars["id"])
     if err != nil {
@@ -37,8 +40,8 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var m Message
-    m := Message{ID: id}
+    var m models.Message
+    m := models.Message{ID: id}
     if err := m.getMessage(db); err != nil {
         switch err {
         case sql.ErrNoRows:
@@ -63,7 +66,7 @@ func messageHandler(w http.ResponseWriter, r *http.Request) {
 
 func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
-    m := &Message{}
+    m := &models.Message{}
     defer r.Body.Close()
 
     if err := json.NewDecoder(r.Body).Decode(m); err != nil
@@ -84,7 +87,7 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        m := Message{ID: id}
+        m := models.Message{ID: id}
         if err := m.deleteMessage(db); err != nil {
             respondWithError(w, http.StatusInternalServerError, err.Error())
             return

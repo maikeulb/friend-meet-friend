@@ -3,9 +3,11 @@ package messages
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
+
+	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
-func (model *Message) getSentMessages(db *sql.DB) (Message, error) {
+func (m *models.Message) getSentMessages(db *sql.DB) (models.Message, error) {
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
         FROM messages as m
@@ -23,10 +25,10 @@ func (model *Message) getSentMessages(db *sql.DB) (Message, error) {
 
 	defer rows.Close()
 
-	messages := []Message{}
+	messages := []models.Message{}
 
 	for rows.Next() {
-		var m Message
+		var m models.Message
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
@@ -40,7 +42,7 @@ func (model *Message) getSentMessages(db *sql.DB) (Message, error) {
 	return messages, nil
 }
 
-func (model *Message) getRecievedMessages(db *sql.DB) (Message, error) {
+func (m *models.Message) getRecievedMessages(db *sql.DB) (models.Message, error) {
 
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
@@ -59,10 +61,10 @@ func (model *Message) getRecievedMessages(db *sql.DB) (Message, error) {
 
 	defer rows.Close()
 
-	messages := []Message{}
+	messages := []models.Message{}
 
 	for rows.Next() {
-		var m Message
+		var m models.Message
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
@@ -76,7 +78,7 @@ func (model *Message) getRecievedMessages(db *sql.DB) (Message, error) {
 	return messages, nil
 }
 
-func (model *Message) getMessage(db *sql.DB) error {
+func (m *models.Message) getMessage(db *sql.DB) error {
 
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
@@ -91,7 +93,7 @@ func (model *Message) getMessage(db *sql.DB) error {
 		&m.Body)
 }
 
-func (model *Message) sendMssages(db *sql.DB) error {
+func (m *models.Message) sendMssages(db *sql.DB) error {
 
 	if err != nil {
 		return nil, err
@@ -100,7 +102,7 @@ func (model *Message) sendMssages(db *sql.DB) error {
 	return nil
 }
 
-func (model *Message) deleteMssages(db *sql.DB) error {
+func (m *models.Message) deleteMssages(db *sql.DB) error {
 
 	if err != nil {
 		return nil, err
