@@ -1,7 +1,6 @@
 package messages
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 )
@@ -13,8 +12,8 @@ type MessageRequest struct {
 	Timestamp   time.Time `json:"timestamp"`
 }
 
-func (jm MessageRequest) Message() models.Message {
-	var m models.Message
+func (jm MessageRequest) Message() Message {
+	var m Message
 	m.SenderID = jm.SenderID
 	m.RecipientID = jm.RecipientID
 	m.Body = jm.Body
@@ -24,17 +23,14 @@ func (jm MessageRequest) Message() models.Message {
 }
 
 func (jm *MessageRequest) validate() error {
-	if jm.SenderID <= "" {
+	if jm.SenderID <= 0 {
 		return errors.New("SenderID should not be empty")
 	}
-	if jm.RecipientID <= "" {
+	if jm.RecipientID <= 0 {
 		return errors.New("RecipientID should not be empty")
 	}
 	if jm.Body <= "" {
 		return errors.New("Body should not be empty")
-	}
-	if jm.Timestamp <= "" {
-		return errors.New("Timestamp should not be empty")
 	}
 
 	return nil
@@ -45,19 +41,25 @@ type MessageResponse struct {
 	SenderID    int       `json:"senderId"`
 	RecipientID int       `json:"recipientId"`
 	Body        string    `json:"body"`
-	Timestamp   time.time `json:"timstamp"`
+	Timestamp   time.Time `json:"timstamp"`
 	Sender      MessageSenderResponse
 	Recipient   MessageRecipientResponse
 }
 
-func Response(m models.Message) MessageResponse {
+// func (m Message) MarshalJSON() ([]byte, error) {
+// 	return json.Marshal(MessageResponse(m))
+// }
+
+func Response(m Message) MessageResponse {
 	var jm MessageResponse
 	jm.SenderID = m.SenderID
 	jm.RecipientID = m.RecipientID
 	jm.Body = m.Body
 	jm.Timestamp = m.Timestamp
-	jm.Sender = m.Sender
-	jm.Recipient = m.Recipient
+	jm.Sender.ID = m.Sender.ID
+	jm.Sender.Username = m.Sender.Username
+	jm.Recipient.ID = m.Recipient.ID
+	jm.Recipient.Username = m.Recipient.Username
 
 	return jm
 }
@@ -70,22 +72,4 @@ type MessageSenderResponse struct {
 type MessageRecipientResponse struct {
 	ID       int    `json:"id"`
 	Username string `json:username"`
-}
-
-func (m models.Message) MarshalJSON() ([]byte, error) {
-	return json.Marshal(MessageResonse(m))
-}
-
-func (m *models.Message) UnmarshalJSON(data []byte) error {
-	var jm MessageRequest
-
-	if err := json.Unmarshal(data, &jm); err != nil {
-		return err
-	}
-	if err := jm.validate(); err != nil {
-		return err
-	}
-
-	*m = jm.Message()
-	return nil
 }

@@ -31,6 +31,8 @@ func (a *App) Initialize(host, port, user, password, dbname string) {
 }
 
 func (a *App) Run(addr string) {
+	fmt.Println("Listening on port: 5000")
+	fmt.Println("/api/messages")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
@@ -39,5 +41,5 @@ func (a *App) initializeRoutes() {
 }
 
 func (a *App) GetMessages(w http.ResponseWriter, r *http.Request) {
-	messages.Getmessages(a.DB, w, r)
+	messages.GetSentMessages(a.DB, w, r)
 }

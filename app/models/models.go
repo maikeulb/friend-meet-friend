@@ -1,22 +1,9 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 )
-
-type Message struct {
-	ID          int
-	SenderID    int
-	RecipientID int
-	Body        string
-	timestamp   time.Time
-	Sender      MessageUser
-	Recipient   MessageUser
-}
-
-type MessageUser struct {
-	User User
-}
 
 type User struct {
 	ID       int
@@ -35,19 +22,23 @@ type User struct {
 }
 
 type MessagesSent struct {
-	MessagesSent Message
+	ID          int
+	RecipientID int
 }
 
 type MessagesRecieved struct {
-	MessagesRecieved Message
+	ID       int
+	SenderID int
 }
 
 type UserFollowers struct {
-	Followers Following
+	FollowerID int
+	Username   string
 }
 
 type UserFollowees struct {
-	Followees Following
+	FolloweeID int
+	Username   string
 }
 
 type Following struct {

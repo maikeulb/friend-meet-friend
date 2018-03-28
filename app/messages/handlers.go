@@ -2,28 +2,25 @@ package messages
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http"
-	"strconv"
+	// "strconv"
 
-	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-
-	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
 //set a flag
 func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	sid, err := strconv.Atoi(vars["userid"])
+	// vars := mux.Vars(r)
+	// sid, err := strconv.Atoi(vars["userid"])
 
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-		return
-	}
+	// if err != nil {
+	// 	respondWithError(w, http.StatusBadRequest, "Invalid message ID")
+	// 	return
+	// }
 
-	var m []models.Message
-	m.ID = 1
-	messages, err := GetSentMessages(db, m)
+	var m []Message
+	messages, err := GetSentMessagesForUser(db, m, 1)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -40,8 +37,8 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //         return
 //     }
 
-//     var m models.Message
-//     m = models.Message{ID: id}
+//     var m Message
+//     m = Message{ID: id}
 //     if err := GetRecievedMessages(db, m); err != nil {
 //         switch err {
 //         case sql.ErrNoRows:
@@ -66,7 +63,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 // func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //     vars := mux.Vars(r)
-//     m := &models.Message{}
+//     m := &Message{}
 //     defer r.Body.Close()
 
 //     if err := json.NewDecoder(r.Body).Decode(m); err != nil
@@ -87,7 +84,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //             return
 //         }
 
-//         m := models.Message{ID: id}
+//         m := Message{ID: id}
 //         if err := DeleteMessage(db, m); err != nil {
 //             respondWithError(w, http.StatusInternalServerError, err.Error())
 //             return
@@ -96,14 +93,14 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 //         respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 //     }
 
-//     func respondWithError(w http.ResponseWriter, code int, message string) {
-//         respondWithJSON(w, code, map[string]string{"error": message})
-//     }
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
 
-//     func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-//         response, _ := json.Marshal(payload)
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
 
-//         w.Header().Set("Content-Type", "application/json")
-//         w.WriteHeader(code)
-//         w.Write(response)
-//     }
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}

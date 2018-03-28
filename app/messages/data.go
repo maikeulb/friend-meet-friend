@@ -3,11 +3,9 @@ package messages
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-
-	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
-func GetSentMessages(db *sql.DB, m models.Message) (models.Message, error) {
+func GetSentMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message, error) {
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
         FROM messages as m
@@ -17,7 +15,7 @@ func GetSentMessages(db *sql.DB, m models.Message) (models.Message, error) {
         ORDER BY m.timestamp;
     `
 
-	rows, err := db.Query(query, m.userID)
+	rows, err := db.Query(query, userID)
 
 	if err != nil {
 		return nil, err
@@ -25,10 +23,10 @@ func GetSentMessages(db *sql.DB, m models.Message) (models.Message, error) {
 
 	defer rows.Close()
 
-	messages := []models.Message{}
+	messages := []Message{}
 
 	for rows.Next() {
-		var m models.Message
+		var m Message
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
@@ -42,7 +40,7 @@ func GetSentMessages(db *sql.DB, m models.Message) (models.Message, error) {
 	return messages, nil
 }
 
-func GetRecievedMessages(db *sql.DB, m models.Message) (models.Message, error) {
+func GetRecievedMessages(db *sql.DB, m Message) ([]Message, error) {
 
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
@@ -53,7 +51,7 @@ func GetRecievedMessages(db *sql.DB, m models.Message) (models.Message, error) {
         ORDER BY m.timestamp
         `
 
-	rows, err := db.Query(query, m.userID)
+	rows, err := db.Query(query, m.ID)
 
 	if err != nil {
 		return nil, err
@@ -61,10 +59,10 @@ func GetRecievedMessages(db *sql.DB, m models.Message) (models.Message, error) {
 
 	defer rows.Close()
 
-	messages := []models.Message{}
+	messages := []Message{}
 
 	for rows.Next() {
-		var m models.Message
+		var m Message
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
@@ -78,35 +76,35 @@ func GetRecievedMessages(db *sql.DB, m models.Message) (models.Message, error) {
 	return messages, nil
 }
 
-func GetMessage(db *sql.DB, m models.Message) error {
+// func GetMessage(db *sql.DB, m Message) error {
 
-	query := `
-        SELECT m.id, m.body, m.timestamp, u.username, u.id
-        FROM messages
-            INNER JOIN users
-            ON m.sender_id = u.id
-        WHERE m.id = $1`
+// 	query := `
+//         SELECT m.id, m.body, m.timestamp, u.username, u.id
+//         FROM messages
+//             INNER JOIN users
+//             ON m.sender_id = u.id
+//         WHERE m.id = $1`
 
-	return db.QueryRow(query, m.ID).Scan(
-		&m.SenderID,
-		&m.RecipientID,
-		&m.Body)
-}
+// 	return db.QueryRow(query, m.ID).Scan(
+// 		&m.SenderID,
+// 		&m.RecipientID,
+// 		&m.Body)
+// }
 
-func SendMssages(db *sql.DB, m models.Message) error {
+// func SendMssages(db *sql.DB, m Message) error {
 
-	if err != nil {
-		return nil, err
-	}
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func DeleteMssages(db *sql.DB, m models.Message) error {
+// func DeleteMssages(db *sql.DB, m Message) error {
 
-	if err != nil {
-		return nil, err
-	}
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
