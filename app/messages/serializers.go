@@ -3,21 +3,14 @@ package messages
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/gorilla/mux"
-	"log"
-	"net/http"
-	"strings"
 	"time"
-
-	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
 type MessageRequest struct {
 	SenderID    int       `json:"senderID"`
 	RecipientID int       `json:"recipientID"`
 	Body        string    `json:"body"`
-	Timestamp   time.time `json:"timestamp"`
+	Timestamp   time.Time `json:"timestamp"`
 }
 
 func (jm MessageRequest) Message() models.Message {

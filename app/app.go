@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/maikeulb/friend_meet_friend/app/messages"
+	"github.com/maikeulb/friend-meet-friend/app/messages"
 )
 
 type App struct {

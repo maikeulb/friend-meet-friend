@@ -1,59 +1,58 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
 type Message struct {
-    ID          int
-    SenderID    int
-    RecipientID int
-    Body        string
-    timestamp   time.time
-    Sender      MessageUser
-    Recipient   MessageUser
+	ID          int
+	SenderID    int
+	RecipientID int
+	Body        string
+	timestamp   time.Time
+	Sender      MessageUser
+	Recipient   MessageUser
 }
 
 type MessageUser struct {
-    User User
+	User User
 }
 
 type User struct {
-    ID                int
-    Username          string
-    PasswordHash      byte[]
-    PasswordSalt      byte[]
-    CreatedOn         time.time
-    LastActive        time.time
-    Bio               string
-    // Interests         string
-    // Neighborhood      string
-    MessagesSent      []MessagesSent
-    MessagesRecieved  []MessagesRecieved
-    Followers         []UserFollowers
-    Followees         []UserFollowees
+	ID       int
+	Username string
+	// PasswordHash      byte[]
+	// PasswordSalt      byte[]
+	CreatedOn  time.Time
+	LastActive time.Time
+	Bio        string
+	// Interests         string
+	// Neighborhood      string
+	MessagesSent     []MessagesSent
+	MessagesRecieved []MessagesRecieved
+	Followers        []UserFollowers
+	Followees        []UserFollowees
 }
 
 type MessagesSent struct {
-    MessagesSent Messages
+	MessagesSent Message
 }
 
 type MessagesRecieved struct {
-    MessagesRecieved Messages
+	MessagesRecieved Message
 }
 
 type UserFollowers struct {
-    Followers    Following
+	Followers Following
 }
 
 type UserFollowees struct {
-    Followees    Following
+	Followees Following
 }
 
 type Following struct {
-    FollowerID  int
-    FolloweeID  int
-    Follower    User
-    Followee    User
+	FollowerID int
+	FolloweeID int
+	Follower   User
+	Followee   User
 }
-

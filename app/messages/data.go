@@ -7,7 +7,7 @@ import (
 	"github.com/maikeulb/friend-meet-friend/app/models"
 )
 
-func (m *models.Message) getSentMessages(db *sql.DB) (models.Message, error) {
+func GetSentMessages(db *sql.DB, m models.Message) (models.Message, error) {
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
         FROM messages as m
@@ -42,7 +42,7 @@ func (m *models.Message) getSentMessages(db *sql.DB) (models.Message, error) {
 	return messages, nil
 }
 
-func (m *models.Message) getRecievedMessages(db *sql.DB) (models.Message, error) {
+func GetRecievedMessages(db *sql.DB, m models.Message) (models.Message, error) {
 
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
@@ -78,7 +78,7 @@ func (m *models.Message) getRecievedMessages(db *sql.DB) (models.Message, error)
 	return messages, nil
 }
 
-func (m *models.Message) getMessage(db *sql.DB) error {
+func GetMessage(db *sql.DB, m models.Message) error {
 
 	query := `
         SELECT m.id, m.body, m.timestamp, u.username, u.id
@@ -93,7 +93,7 @@ func (m *models.Message) getMessage(db *sql.DB) error {
 		&m.Body)
 }
 
-func (m *models.Message) sendMssages(db *sql.DB) error {
+func SendMssages(db *sql.DB, m models.Message) error {
 
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (m *models.Message) sendMssages(db *sql.DB) error {
 	return nil
 }
 
-func (m *models.Message) deleteMssages(db *sql.DB) error {
+func DeleteMssages(db *sql.DB, m models.Message) error {
 
 	if err != nil {
 		return nil, err
