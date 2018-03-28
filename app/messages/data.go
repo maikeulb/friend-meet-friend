@@ -15,7 +15,7 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
     ORDER BY m.timestamp;
     `
 
-	rows, err := db.Query(query, 2)
+	rows, err := db.Query(query, 1)
 
 	if err != nil {
 		return nil, err
@@ -41,18 +41,18 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
 	return messages, nil
 }
 
-func GetRecievedMessages(db *sql.DB, m Message) ([]Message, error) {
+func GetRecievedMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, error) {
 
 	query := `
-        SELECT m.id, m.body, m.timestamp, u.username, u.id
-        FROM messages
-        INNER JOIN users
+        SELECT m.id, m.body, m.timestamp, u.id, u.username
+        FROM messages as m
+        INNER JOIN users as u
         ON m.sender_id = u.id
         WHERE m.recipient_id = $1
         ORDER BY m.timestamp
         `
 
-	rows, err := db.Query(query, m.ID)
+	rows, err := db.Query(query, 1)
 
 	if err != nil {
 		return nil, err
@@ -60,15 +60,16 @@ func GetRecievedMessages(db *sql.DB, m Message) ([]Message, error) {
 
 	defer rows.Close()
 
-	messages := []Message{}
+	messages := []*Message{}
 
 	for rows.Next() {
-		var m Message
+		var m = &Message{}
 		if err := rows.Scan(
 			&m.ID,
 			&m.Body,
-			&m.RecipientID,
-			&m.SenderID); err != nil {
+			&m.Timestamp,
+			&m.Sender.ID,
+			&m.Sender.Username); err != nil {
 			return nil, err
 		}
 		messages = append(messages, m)

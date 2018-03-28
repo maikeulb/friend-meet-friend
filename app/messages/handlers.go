@@ -29,28 +29,28 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, messages)
 }
 
-// func GetRecievedMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-//     vars := mux.Vars(r)
-//     id, err := strconv.Atoi(vars["id"])
-//     if err != nil {
-//         respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-//         return
-//     }
+func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	// vars := mux.Vars(r)
+	// id, err := strconv.Atoi(vars["id"])
+	// if err != nil {
+	// respondWithError(w, http.StatusBadRequest, "Invalid message ID")
+	// return
+	// }
 
-//     var m Message
-//     m = Message{ID: id}
-//     if err := GetRecievedMessages(db, m); err != nil {
-//         switch err {
-//         case sql.ErrNoRows:
-//             respondWithError(w, http.StatusNotFound, "Message not found")
-//         default:
-//             respondWithError(w, http.StatusInternalServerError, err.Error())
-//         }
-//         return
-//     }
+	var m []*Message
+	messages, err := GetRecievedMessagesForUser(db, m, 2)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "No messages found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
 
-//     respondWithJSON(w, http.StatusOK, m)
-// }
+	respondWithJSON(w, http.StatusOK, messages)
+}
 
 // func messageHandler(w http.ResponseWriter, r *http.Request) {
 
