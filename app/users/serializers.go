@@ -63,24 +63,27 @@ func Response(u User) UserResponse {
 	ju.Neighborhood = u.Neighborhood
 	ju.CreatedOn = u.CreatedOn
 	ju.LastActive = u.LastActive
-	// ju.Followers = u.Followers.ID
-	// ju.Followers.Username = u.Followers.Username
-	// ju.Followees.ID = u.Followees.ID
-	// ju.Followees.Username = u.Followees.Username
-	// for x := range p.Fruits {
-	// 	if _, err = stmt4.Exec(string(i), x.Type, x.Number); err != nil {
-	// 		log.Println("stmt1.Exec: ", err.Error())
-	// 		return
-	// 	}
-	// }
 
-	// for _, follower := range ju.Followers {
-	// for _, follower := range ju.Followers {
-	// 	// followers = append(followers, follower)
-	// 	u.Followers = append(u.Followers, follower)
-	// }
-	// // u.Followees = append(u.Followees, *u3)
-	// // users = append(users, u)
+	var juFollowers []FollowersResponse
+	for _, follower := range u.Followers {
+		juFollowers = append(juFollowers,
+			FollowersResponse{
+				ID:       follower.ID,
+				Username: follower.Username,
+			})
+	}
+	ju.Followers = juFollowers
+
+	var juFollowees []FolloweesResponse
+	for _, followee := range u.Followees {
+		juFollowees = append(juFollowees,
+			FolloweesResponse{
+				ID:       followee.ID,
+				Username: followee.Username,
+			})
+	}
+	ju.Followees = juFollowees
+
 	return ju
 }
 
