@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	// "strconv"
+	"strconv"
 
-	// "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
@@ -27,23 +27,29 @@ func GetProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, users)
 }
 
-// func GetUserProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
+func GetProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
-// 	userID, err := strconv.Atoi(vars["userId"])
-// 	if err != nil {
-// 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
-// 		return
-// 	}
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
+		return
+	}
 
-// 	profile, err := u.getProfile(db, userID)
-// 	if err != nil {
-// 		respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	var u User
+	profile, err := GetUserProfile(db, u, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "No messages found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
 
-// 	respondWithJSON(w, http.StatusOK, users)
-// }
+	respondWithJSON(w, http.StatusOK, profile)
+}
 
 // func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 // 	vars := mux.Vars(r)

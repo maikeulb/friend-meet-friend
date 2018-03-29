@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	// "fmt"
 	_ "github.com/lib/pq"
+	"log"
 )
 
 func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
@@ -18,21 +19,21 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
     u.last_active,
     f.follower_id,
     u2.username,
-    f.followed_id,
+    f.followee_id,
     u3.username
     FROM users as u
     INNER JOIN followings as f
     ON u.id = f.follower_id
-    OR u.id = f.followed_id
+    OR u.id = f.followee_id
     INNER JOIN users as u2
     ON u2.id = f.follower_id
     INNER JOIN users as u3
-    ON u3.id = f.followed_id
+    ON u3.id = f.followee_id
     ORDER BY u.created_on;`
 
 	rows, err := db.Query(query)
 
-	if err != nil {
+	if err != nil { //what should I check?
 		return nil, err
 	}
 
@@ -81,44 +82,56 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 	return users, nil
 }
 
-func (model *User) getProfile(db *sql.DB) (User, error) {
+func GetUserProfile(db *sql.DB, u User, userID int) (User, error) {
 
- query := `
+	query := `
         SELECT u.id,
         u.username,
-        u.last_active,
-        u.bio,
+        u.email,
+        u.interests,
+        u.borough,
         u.created_on,
+        u.last_active,
         f.follower_id,
-        f.followed_id,
         u2.username,
+        f.followee_id,
         u3.username
-        FROM users u
+        FROM users as u
         INNER JOIN followings as f
         ON u.id = f.follower_id
-        OR u.id = f.followed_id
+        OR u.id = f.followee_id
         INNER JOIN users as u2
         ON u2.id = f.follower_id
         INNER JOIN users as u3
-        ON u3.id = f.followed_id
-        WHERE id=$1`
+        ON u3.id = f.followee_id
+        WHERE u.id=$1`
 
- rows, err := db.QueryRow(query, m.ID).Scan(
-     &m.ID,
-     &m.Username,
-     &m.Bio,
-     &m.CreatedOn,
-     &m.LastActive)
+	var u2 = &Followers{}
+	var u3 = &Followees{}
+	err := db.QueryRow(query, userID).Scan(
+		&u.ID,
+		&u.Username,
+		&u.Email,
+		&u.Interests,
+		&u.Neighborhood,
+		&u.CreatedOn,
+		&u.LastActive,
+		&u2.ID,
+		&u2.Username,
+		&u3.ID,
+		&u3.Username)
 
- if err == sql.ErrNoRows {
-     log.Printf("No users")
- }
+	u.Followers = append(u.Followers, *u2)
+	u.Followees = append(u.Followees, *u3)
 
- if err != nil {
-     log.Fatal(err)
- }
+	if err == sql.ErrNoRows {
+		log.Printf("No users")
+	}
 
- return rows
+	if err != nil {
+		log.Fatal(err)
+	}
+	return u, nil
 }
 
 // func (model *User) editProfile(db *sql.DB) (User, error) {
@@ -131,17 +144,17 @@ func (model *User) getProfile(db *sql.DB) (User, error) {
 //             u.bio,
 //             u.created_on,
 //             f.follower_id,
-//             f.followed_id,
+//             f.followee_id,
 //             u2.username,
 //             u3.username
 //             FROM users u
 //             INNER JOIN followings as f
 //             ON u.id = f.follower_id
-//             OR u.id = f.followed_id
+//             OR u.id = f.followee_id
 //             INNER JOIN users as u2
 //             ON u2.id = f.follower_id
 //             INNER JOIN users as u3
-//             ON u3.id = f.followed_id
+//             ON u3.id = f.followee_id
 //             WHERE id=$1`
 
 //  return db.QueryRow(query, m.ID).Scan(
@@ -174,4 +187,3 @@ func IsUnique(s int, e int) bool {
 	}
 	return true
 }
-
