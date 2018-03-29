@@ -5,6 +5,33 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func GetMessageForUser(db *sql.DB, m *Message, userID int) error {
+
+	query := `
+        SELECT m.id, 
+            m.body, 
+            m.timestamp,
+            u.id,
+            u.username,
+            u2.id,
+            u2.username
+        FROM messages as m
+            INNER JOIN users as u
+            ON m.recipient_id = u.id
+            INNER JOIN users as u2
+            ON m.sender_id = u2.id
+        WHERE m.id = $2 and m.sender_id = $1`
+
+	return db.QueryRow(query, userID, m.ID).Scan( // should I check error?
+		&m.ID,
+		&m.Body,
+		&m.Timestamp,
+		&m.Recipient.ID,
+		&m.Recipient.Username,
+		&m.Sender.ID,
+		&m.Sender.Username)
+}
+
 func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, error) {
 	query := `
         SELECT m.id, 
@@ -84,34 +111,23 @@ func GetRecievedMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Messag
 	return messages, nil
 }
 
-func GetMessageForUser(db *sql.DB, m *Message, userID int) error {
-
-	query := `
-        SELECT m.id, 
-            m.body, 
-            m.timestamp,
-            u.id,
-            u.username,
-            u2.id,
-            u2.username
-        FROM messages as m
-            INNER JOIN users as u
-            ON m.recipient_id = u.id
-            INNER JOIN users as u2
-            ON m.sender_id = u2.id
-        WHERE m.id = $2 and m.sender_id = $1`
-
-	return db.QueryRow(query, userID, m.ID).Scan( // should I check error?
-		&m.ID,
-		&m.Body,
-		&m.Timestamp,
-		&m.Recipient.ID,
-		&m.Recipient.Username,
-		&m.Sender.ID,
-		&m.Sender.Username)
-}
 
 // func SendMssages(db *sql.DB, m Message) error {
+
+// 	command := `
+//         INSERT INTO messages (body, senderID, recipientID)
+//         VALUES ($1, $2, $3)
+//             m.body,
+//             m.senderID,
+//             m.recipientID,
+//             us.id,
+//             us.username,
+//             ur.id,
+//             ur.username`,
+//             m.ID, m.senderID, m.recipeintID).Scan(
+//                 &m.ID)
+//                 &m.SenderID)
+//                 &m.RecipientID)
 
 //  if err != nil {
 //      return nil, err

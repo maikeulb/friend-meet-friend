@@ -37,37 +37,23 @@ func (a *App) Run(addr string) {
 	fmt.Println("Listening on port: 5000")
 	fmt.Println("/api/login")
 	fmt.Println("/api/status")
-	fmt.Println("/api/messages/{id}")
-	fmt.Println("/api/messages/sent")
-	fmt.Println("/api/messages/received")
-	fmt.Println("/api/profiles")
-	fmt.Println("/api/profiles/mine")
-	fmt.Println("/api/profiles/{id}")
+	fmt.Println("/api/users")
+	fmt.Println("/api/users/{userId}")
+	fmt.Println("/api/users/{userId}/messages/{id}")
+	fmt.Println("/api/users/{userId}/messages/sent")
+	fmt.Println("/api/users/{userId}/messages/recieved")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/login", a.Login)
 	a.Router.HandleFunc("/api/status", a.Status)
-	a.Router.HandleFunc("/api/messages/{id:[0-9]+}", a.GetMessage).Methods("GET")
-	a.Router.HandleFunc("/api/messages/sent", a.GetSentMessages).Methods("GET")
-	a.Router.HandleFunc("/api/messages/recieved", a.GetRecievedMessages).Methods("GET")
-	a.Router.HandleFunc("/api/profiles", a.GetProfiles).Methods("GET")
-	a.Router.HandleFunc("/api/profiles/mine", a.GetMyProfile).Methods("GET")
-	a.Router.HandleFunc("/api/profiles/{id:[0-9]+}", a.GetProfile).Methods("GET")
+	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.GetUserMessage).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.GetUserSentMessages).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
 	a.Router.Use(a.AddContextMiddleware)
-}
-
-func (a *App) GetSentMessages(w http.ResponseWriter, r *http.Request) {
-	messages.GetSentMessages(a.DB, w, r) // consider squashing sent and recieved to one urla nd adding a filter
-}
-
-func (a *App) GetRecievedMessages(w http.ResponseWriter, r *http.Request) {
-	messages.GetRecievedMessages(a.DB, w, r)
-}
-
-func (a *App) GetMessage(w http.ResponseWriter, r *http.Request) {
-	messages.GetMessage(a.DB, w, r)
 }
 
 func (a *App) AddContextMiddleware(next http.Handler) http.Handler {
@@ -83,16 +69,24 @@ func (a *App) AddContextMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (a *App) GetProfiles(w http.ResponseWriter, r *http.Request) {
-	users.GetProfiles(a.DB, w, r)
+func (a *App) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users.GetUsers(a.DB, w, r)
 }
 
-func (a *App) GetProfile(w http.ResponseWriter, r *http.Request) {
-	users.GetProfile(a.DB, w, r)
+func (a *App) GetUser(w http.ResponseWriter, r *http.Request) {
+	users.GetUser(a.DB, w, r)
 }
 
-func (a *App) GetMyProfile(w http.ResponseWriter, r *http.Request) {
-	users.GetMyProfile(a.DB, w, r)
+func (a *App) GetUserMessage(w http.ResponseWriter, r *http.Request) {
+	messages.GetMessage(a.DB, w, r)
+}
+
+func (a *App) GetUserSentMessages(w http.ResponseWriter, r *http.Request) {
+	messages.GetSentMessages(a.DB, w, r)
+}
+
+func (a *App) GetUserRecievedMessages(w http.ResponseWriter, r *http.Request) {
+	messages.GetRecievedMessages(a.DB, w, r)
 }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {

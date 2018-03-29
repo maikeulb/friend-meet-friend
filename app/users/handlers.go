@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func GetProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func GetUsers(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	var u []*User
 	users, err := GetUserProfiles(db, u)
@@ -27,39 +27,21 @@ func GetProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, users)
 }
 
-func GetProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func GetUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	id, err := strconv.Atoi(vars["id"])
+	userID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
 		return
 	}
 
-	var u User
-	profile, err := GetUserProfile(db, u, id)
+	u := User{ID: userID}
+	profile, err := GetUserProfile(db, u)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "No messages found")
-		default:
-			respondWithError(w, http.StatusInternalServerError, err.Error())
-		}
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, profile)
-}
-
-func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	id := 2 // get from context
-
-	u := User{ID: id}
-	profile, err := GetMyUserProfile(db, u)
-	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			respondWithError(w, http.StatusNotFound, "User not found")
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}

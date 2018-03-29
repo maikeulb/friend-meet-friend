@@ -10,13 +10,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
-//set a flag
 func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	userID := 2 // get from context
+
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+
+	// userID := 2 // get from context
 	// if err != nil {
 	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
 	//  return
-	// }
+	// } compare with userID
 
 	var m []*Message
 	messages, err := GetSentMessagesForUser(db, m, userID)
@@ -34,7 +41,19 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	userID := 2 // get from context
+
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+
+	// userID := 2 // get from context
+	// if err != nil {
+	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
+	//  return
+	// } compare with userID
 
 	var m []*Message
 	messages, err := GetRecievedMessagesForUser(db, m, userID)
@@ -52,16 +71,20 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	userID := 2 // get from context
+
 	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Message ID")
 		return
 	}
 
-	// m := *Message{ID: 1}
 	m := Message{ID: id}
-	// var m Message
 	if err := GetMessageForUser(db, &m, userID); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

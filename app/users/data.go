@@ -82,59 +82,7 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 	return users, nil
 }
 
-func GetUserProfile(db *sql.DB, u User, userID int) (User, error) {
-
-	query := `
-        SELECT u.id,
-        u.username,
-        u.email,
-        u.interests,
-        u.borough,
-        u.created_on,
-        u.last_active,
-        f.follower_id,
-        u2.username,
-        f.followee_id,
-        u3.username
-        FROM users as u
-        INNER JOIN followings as f
-        ON u.id = f.follower_id
-        OR u.id = f.followee_id
-        INNER JOIN users as u2
-        ON u2.id = f.follower_id
-        INNER JOIN users as u3
-        ON u3.id = f.followee_id
-        WHERE u.id=$1`
-
-	var u2 = &Followers{}
-	var u3 = &Followees{}
-	err := db.QueryRow(query, userID).Scan(
-		&u.ID,
-		&u.Username,
-		&u.Email,
-		&u.Interests,
-		&u.Neighborhood,
-		&u.CreatedOn,
-		&u.LastActive,
-		&u2.ID,
-		&u2.Username,
-		&u3.ID,
-		&u3.Username)
-
-	u.Followers = append(u.Followers, *u2)
-	u.Followees = append(u.Followees, *u3)
-
-	if err == sql.ErrNoRows {
-		log.Printf("No users")
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	return u, nil
-}
-
-func GetMyUserProfile(db *sql.DB, u User) (User, error) {
+func GetUserProfile(db *sql.DB, u User) (User, error) {
 
 	query := `
         SELECT u.id,
