@@ -41,7 +41,8 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/messages/sent")
 	fmt.Println("/api/messages/received")
 	fmt.Println("/api/profiles")
-	fmt.Println("/api/profile/{id}")
+	fmt.Println("/api/profiles/mine")
+	fmt.Println("/api/profiles/{id}")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
@@ -52,6 +53,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/messages/sent", a.GetSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/messages/recieved", a.GetRecievedMessages).Methods("GET")
 	a.Router.HandleFunc("/api/profiles", a.GetProfiles).Methods("GET")
+	a.Router.HandleFunc("/api/profiles/mine", a.GetMyProfile).Methods("GET")
 	a.Router.HandleFunc("/api/profiles/{id:[0-9]+}", a.GetProfile).Methods("GET")
 	a.Router.Use(a.AddContextMiddleware)
 }
@@ -87,6 +89,10 @@ func (a *App) GetProfiles(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) GetProfile(w http.ResponseWriter, r *http.Request) {
 	users.GetProfile(a.DB, w, r)
+}
+
+func (a *App) GetMyProfile(w http.ResponseWriter, r *http.Request) {
+	users.GetMyProfile(a.DB, w, r)
 }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {

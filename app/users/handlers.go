@@ -51,32 +51,33 @@ func GetProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, profile)
 }
 
-// func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
+func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	id := 2 // get from context
 
-// 	u := User{ID: id}
-// 	if err := u.getProfile(db); err != nil {
-// 		switch err {
-// 		case sql.ErrNoRows:
-// 			respondWithError(w, http.StatusNotFound, "User not found")
-// 		default:
-// 			respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		}
-// 		return
-// 	}
+	u := User{ID: id}
+	profile, err := GetMyUserProfile(db, u)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "User not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
 
-// 	respondWithJSON(w, http.StatusOK, u)
-// }
+	respondWithJSON(w, http.StatusOK, profile)
+}
 
 // func EditMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 // 	vars := mux.Vars(r)
 
-// 	decoder := json.NewDecoder(r.Body)
-// 	if err := decoder.Decode(&u); err != nil {
-// 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-// 		return
-// 	}
-// 	defer r.Body.Close()
+// decoder := json.NewDecoder(r.Body)
+// if err := decoder.Decode(&u); err != nil {
+// 	respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+// 	return
+// }
+// defer r.Body.Close()
 
 // 	if err := u.editProfile(db, u); err != nil {
 // 		respondWithError(w, http.StatusInternalServerError, err.Error())
