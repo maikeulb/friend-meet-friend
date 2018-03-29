@@ -2,7 +2,7 @@ package users
 
 import (
 	"database/sql"
-	"fmt"
+	// "fmt"
 	_ "github.com/lib/pq"
 )
 
@@ -59,14 +59,21 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 			&u3.Username); err != nil {
 			return nil, err
 		}
-		if Contains(ids, u.ID) {
-			users[len(users)-1].Followers = append(users[len(users)-1].Followers, *u2)
-			users[len(users)-1].Followees = append(users[len(users)-1].Followees, *u3)
-			fmt.Println(u.Username)
 
+		if Contains(ids, u.ID) {
+			if IsUnique(u.ID, u2.ID) {
+				users[len(users)-1].Followers = append(users[len(users)-1].Followers, *u2)
+			}
+			if IsUnique(u.ID, u3.ID) {
+				users[len(users)-1].Followees = append(users[len(users)-1].Followees, *u3)
+			}
 		} else {
-			u.Followers = append(u.Followers, *u2)
-			u.Followees = append(u.Followees, *u3)
+			if IsUnique(u.ID, u2.ID) {
+				u.Followers = append(u.Followers, *u2)
+			}
+			if IsUnique(u.ID, u3.ID) {
+				u.Followees = append(u.Followees, *u3)
+			}
 			users = append(users, u)
 		}
 		ids = append(ids, u.ID)
@@ -81,6 +88,13 @@ func Contains(s []int, e int) bool {
 		}
 	}
 	return false
+}
+
+func IsUnique(s int, e int) bool {
+	if s == e {
+		return false
+	}
+	return true
 }
 
 // func (model *User) getProfile(db *sql.DB) (User, error) {
