@@ -20,8 +20,8 @@ CREATE TABLE messages (
 
 CREATE TABLE followings (
     follower_id integer NOT NULL,
-    followed_id integer NOT NULL,
-    PRIMARY KEY (follower_id, followed_id)
+    followee_id integer NOT NULL,
+    PRIMARY KEY (follower_id, followee_id)
 );
 
 ALTER TABLE messages
@@ -43,8 +43,8 @@ REFERENCES users(id)
 ON DELETE CASCADE;
 
 ALTER TABLE followings
-ADD CONSTRAINT fk_followed_users
-FOREIGN KEY (followed_id)
+ADD CONSTRAINT fk_followee_users
+FOREIGN KEY (followee_id)
 REFERENCES users(id)
 ON DELETE CASCADE;
 

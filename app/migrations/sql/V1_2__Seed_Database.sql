@@ -9,7 +9,7 @@ INSERT INTO messages (body, timestamp, sender_id, recipient_id) VALUES
 ('hey michael', '2018-02-21 08:13:13', 2, 2),
 ('hey michael', '2018-03-01 02:26:04', 2, 3);
 
-INSERT INTO followings (follower_id, followed_id) VALUES
+INSERT INTO followings (follower_id, followee_id) VALUES
 (2, 1),
 (4, 2),
 (4, 3);

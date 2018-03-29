@@ -81,61 +81,45 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 	return users, nil
 }
 
-func Contains(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
+func (model *User) getProfile(db *sql.DB) (User, error) {
+
+ query := `
+        SELECT u.id,
+        u.username,
+        u.last_active,
+        u.bio,
+        u.created_on,
+        f.follower_id,
+        f.followed_id,
+        u2.username,
+        u3.username
+        FROM users u
+        INNER JOIN followings as f
+        ON u.id = f.follower_id
+        OR u.id = f.followed_id
+        INNER JOIN users as u2
+        ON u2.id = f.follower_id
+        INNER JOIN users as u3
+        ON u3.id = f.followed_id
+        WHERE id=$1`
+
+ rows, err := db.QueryRow(query, m.ID).Scan(
+     &m.ID,
+     &m.Username,
+     &m.Bio,
+     &m.CreatedOn,
+     &m.LastActive)
+
+ if err == sql.ErrNoRows {
+     log.Printf("No users")
+ }
+
+ if err != nil {
+     log.Fatal(err)
+ }
+
+ return rows
 }
-
-func IsUnique(s int, e int) bool {
-	if s == e {
-		return false
-	}
-	return true
-}
-
-// func (model *User) getProfile(db *sql.DB) (User, error) {
-
-//  query := `
-//         SELECT u.id,
-//         u.username,
-//         u.last_active,
-//         u.bio,
-//         u.created_on,
-//         f.follower_id,
-//         f.followed_id,
-//         u2.username,
-//         u3.username
-//         FROM users u
-//         INNER JOIN followings as f
-//         ON u.id = f.follower_id
-//         OR u.id = f.followed_id
-//         INNER JOIN users as u2
-//         ON u2.id = f.follower_id
-//         INNER JOIN users as u3
-//         ON u3.id = f.followed_id
-//         WHERE id=$1`
-
-//  rows, err := db.QueryRow(query, m.ID).Scan(
-//      &m.ID,
-//      &m.Username,
-//      &m.Bio,
-//      &m.CreatedOn,
-//      &m.LastActive)
-
-//  if err == sql.ErrNoRows {
-//      log.Printf("No users")
-//  }
-
-//  if err != nil {
-//      log.Fatal(err)
-//  }
-
-//  return rows
-// }
 
 // func (model *User) editProfile(db *sql.DB) (User, error) {
 
@@ -174,3 +158,20 @@ func IsUnique(s int, e int) bool {
 //      log.Fatal(err)
 //  }
 // }
+
+func Contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func IsUnique(s int, e int) bool {
+	if s == e {
+		return false
+	}
+	return true
+}
+
