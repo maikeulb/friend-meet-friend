@@ -40,6 +40,7 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/messages/{id}")
 	fmt.Println("/api/messages/sent")
 	fmt.Println("/api/messages/received")
+	fmt.Println("/api/profiles")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 

@@ -2,22 +2,23 @@ package users
 
 import (
 	"database/sql"
-	// "fmt"
+	"fmt"
 	_ "github.com/lib/pq"
 )
 
 func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
+
 	query := `
     SELECT u.id,
     u.username,
     u.email,
     u.interests,
-    u.neighborhood,
+    u.borough,
     u.created_on,
     u.last_active,
     f.follower_id,
     u2.username,
-    f.followed_id
+    f.followed_id,
     u3.username
     FROM users as u
     INNER JOIN followings as f
@@ -27,7 +28,7 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
     ON u2.id = f.follower_id
     INNER JOIN users as u3
     ON u3.id = f.followed_id
-    ORDER BY m.timestamp;`
+    ORDER BY u.created_on;`
 
 	rows, err := db.Query(query)
 
@@ -38,6 +39,7 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 	defer rows.Close()
 
 	users := []*User{}
+	ids := []int{}
 
 	for rows.Next() {
 		var u = &User{}
@@ -57,16 +59,33 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 			&u3.Username); err != nil {
 			return nil, err
 		}
-		u.Followers = append(u.Followers, *u2)
-		u.Followees = append(u.Followees, *u3)
-		users = append(users, u)
+		if Contains(ids, u.ID) {
+			users[len(users)-1].Followers = append(users[len(users)-1].Followers, *u2)
+			users[len(users)-1].Followees = append(users[len(users)-1].Followees, *u3)
+			fmt.Println(u.Username)
+
+		} else {
+			u.Followers = append(u.Followers, *u2)
+			u.Followees = append(u.Followees, *u3)
+			users = append(users, u)
+		}
+		ids = append(ids, u.ID)
 	}
 	return users, nil
 }
 
+func Contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 // func (model *User) getProfile(db *sql.DB) (User, error) {
 
-// 	query := `
+//  query := `
 //         SELECT u.id,
 //         u.username,
 //         u.last_active,
@@ -86,27 +105,27 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 //         ON u3.id = f.followed_id
 //         WHERE id=$1`
 
-// 	rows, err := db.QueryRow(query, m.ID).Scan(
-// 		&m.ID,
-// 		&m.Username,
-// 		&m.Bio,
-// 		&m.CreatedOn,
-// 		&m.LastActive)
+//  rows, err := db.QueryRow(query, m.ID).Scan(
+//      &m.ID,
+//      &m.Username,
+//      &m.Bio,
+//      &m.CreatedOn,
+//      &m.LastActive)
 
-// 	if err == sql.ErrNoRows {
-// 		log.Printf("No users")
-// 	}
+//  if err == sql.ErrNoRows {
+//      log.Printf("No users")
+//  }
 
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+//  if err != nil {
+//      log.Fatal(err)
+//  }
 
-// 	return rows
+//  return rows
 // }
 
 // func (model *User) editProfile(db *sql.DB) (User, error) {
 
-// 	query := `
+//  query := `
 
 //             SELECT u.id,
 //             u.username,
@@ -127,17 +146,17 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 //             ON u3.id = f.followed_id
 //             WHERE id=$1`
 
-// 	return db.QueryRow(query, m.ID).Scan(
-// 		&m.SenderID,
-// 		&m.RecipientID,
-// 		&m.Body,
-// 		&m.IsRead)
+//  return db.QueryRow(query, m.ID).Scan(
+//      &m.SenderID,
+//      &m.RecipientID,
+//      &m.Body,
+//      &m.IsRead)
 
-// 	if err == sql.ErrNoRows {
-// 		log.Printf("No users")
-// 	}
+//  if err == sql.ErrNoRows {
+//      log.Printf("No users")
+//  }
 
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+//  if err != nil {
+//      log.Fatal(err)
+//  }
 // }
