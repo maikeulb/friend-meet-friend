@@ -16,8 +16,7 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
             INNER JOIN users as u
             ON m.recipient_id = u.id
         WHERE m.sender_id = $1
-        ORDER BY m.timestamp;
-    `
+        ORDER BY m.timestamp;`
 
 	rows, err := db.Query(query, userID)
 
@@ -41,7 +40,6 @@ func GetSentMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Message, e
 		}
 		messages = append(messages, m)
 	}
-
 	return messages, nil
 }
 

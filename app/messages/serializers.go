@@ -41,7 +41,7 @@ type MessageResponse struct {
 	SenderID    int                      `json:"senderId,omitempty"`
 	RecipientID int                      `json:"recipientId,omitempty"`
 	Body        string                   `json:"body,omitempty"`
-	Timestamp   time.Time                `json:"timstamp,omitempty"`
+	Timestamp   time.Time                `json:"timestamp,omitempty"`
 	Sender      MessageSenderResponse    `json:"sender,omitempty"`
 	Recipient   MessageRecipientResponse `json:"recipient,omitempty"`
 }

@@ -6,71 +6,88 @@ import (
 	"net/http"
 	// "strconv"
 
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-func GetUserProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func GetProfiles(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
-	users, err := u.getUsers(db)
+	var u []*User
+	users, err := GetUserProfiles(db, u)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, users)
-}
-
-func GetUserProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	userID, err := strconv.Atoi(vars["userId"])
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
-		return
-	}
-
-	profile, err := u.getProfile(db, userID)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, users)
-}
-
-func GetMine(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	u := User{ID: id}
-	if err := u.getProfile(db); err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			respondWithError(w, http.StatusNotFound, "User not found")
+			respondWithError(w, http.StatusNotFound, "No messages found")
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, u)
+	respondWithJSON(w, http.StatusOK, users)
 }
 
-func EditMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+// func GetUserProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
 
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&u); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
+// 	userID, err := strconv.Atoi(vars["userId"])
+// 	if err != nil {
+// 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
+// 		return
+// 	}
 
-	if err := u.editProfile(db, u); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	profile, err := u.getProfile(db, userID)
+// 	if err != nil {
+// 		respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	respondWithJSON(w, http.StatusCreated, u)
+// 	respondWithJSON(w, http.StatusOK, users)
+// }
+
+// func GetMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+
+// 	u := User{ID: id}
+// 	if err := u.getProfile(db); err != nil {
+// 		switch err {
+// 		case sql.ErrNoRows:
+// 			respondWithError(w, http.StatusNotFound, "User not found")
+// 		default:
+// 			respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		}
+// 		return
+// 	}
+
+// 	respondWithJSON(w, http.StatusOK, u)
+// }
+
+// func EditMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+
+// 	decoder := json.NewDecoder(r.Body)
+// 	if err := decoder.Decode(&u); err != nil {
+// 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+// 		return
+// 	}
+// 	defer r.Body.Close()
+
+// 	if err := u.editProfile(db, u); err != nil {
+// 		respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
+
+// 	respondWithJSON(w, http.StatusCreated, u)
+// }
+
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
