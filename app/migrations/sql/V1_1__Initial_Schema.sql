@@ -3,7 +3,6 @@ CREATE TABLE users (
     username varchar(50) NOT NULL,
     email varchar(50) NOT NULL,
     password_hash bytea NULL,
-    password_salt bytea NULL,
     interests TEXT NULL,
     borough varchar(50) NULL,
     created_on timestamp NULL,

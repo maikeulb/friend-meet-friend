@@ -1,8 +1,8 @@
-INSERT INTO users (username, email, interests, borough, created_on, last_active) VALUES
-('michael', 'michael@email.com', 'museums', 'queens', '2017-01-01 10:23:54', '2018-12-01 01:02:12'),
-('mick', 'jake@email.com', 'bmx bikes', 'manhattan', '2017-01-01 10:23:54', '2018-11-04 03:22:24'),
-('marco', 'marco@email.com', 'movies', 'queens', '2017-01-01 10:23:54', '2018-01-01 09:13:54'),
-('amanda', 'amanda@email.com', 'eating', 'brooklyn', '2017-01-01 10:23:54', '2018-01-02 10:13:44');
+INSERT INTO users (username, email, password_hash, interests, borough) VALUES
+('michael', 'michael@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'museums', 'queens'),
+('mick','jake@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'bmx bikes', 'manhattan'),
+('marco','marco@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'movies', 'queens'),
+('amanda','amanda@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'eating', 'brooklyn');
 
 INSERT INTO messages (body, timestamp, sender_id, recipient_id) VALUES
 ('hey amanda', '2017-12-11 09:22:51', 4, 1),
