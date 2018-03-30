@@ -12,7 +12,7 @@ import (
 
 func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	followerID := 1
+	followerID := 4
 
 	followeeID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
@@ -31,7 +31,7 @@ func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func UnFollow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	followerID := 1
+	followerID := 4
 
 	followeeID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
