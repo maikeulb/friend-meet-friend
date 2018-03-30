@@ -1,0 +1,13 @@
+crud
+
+  users
+-create (later)
+  -read
+  -update (in progress)
+-delete (not supported)
+
+  messages
+  -create
+  -read
+  -update (not supported
+      -delete (not supported)
