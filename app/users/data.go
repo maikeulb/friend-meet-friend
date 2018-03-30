@@ -31,7 +31,6 @@ func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
         ORDER BY u.created_on;`
 
 	rows, err := db.Query(query)
-
 	if err == sql.ErrNoRows {
 		return nil, err
 	}

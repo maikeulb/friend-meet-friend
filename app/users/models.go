@@ -2,9 +2,9 @@ package users
 
 import (
 	"encoding/json"
-	"errors"
+	// "errors"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
+	// "golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -56,21 +56,21 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (u *User) CheckPassword(password string) error {
-	bytePassword := []byte(password)
-	byteHashedPassword := []byte(u.PasswordHash)
-	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
-}
+// func (u *User) CheckPassword(password string) error {
+// 	bytePassword := []byte(password)
+// 	byteHashedPassword := []byte(u.PasswordHash)
+// 	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
+// }
 
-func (u *User) SetPassword(password string) error {
-	if len(password) == 0 {
-		return errors.New("password should not be empty!")
-	}
-	bytePassword := []byte(password)
-	passwordHash, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	u.PasswordHash = passwordHash
-	return nil
-}
+// func (u *User) SetPassword(password string) error {
+// 	if len(password) == 0 {
+// 		return errors.New("password should not be empty!")
+// 	}
+// 	bytePassword := []byte(password)
+// 	passwordHash, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	u.PasswordHash = passwordHash
+// 	return nil
+// }

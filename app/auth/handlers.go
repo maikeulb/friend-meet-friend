@@ -1,65 +1,77 @@
-package users
+package auth
 
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"net/http"
-	"strconv"
+	// "strconv"
 
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
 // const SIGN_KEY = []byte("secret")
 
-func Login(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
-	var u []*users.User
-	email := strings.ToLower(r.FormValue("email"))
-	password, err := redis.Bytes(conn.Do("GET", email))
-	if err == nil {
-		err = bcrypt.CompareHashAndPassword(password, []byte(r.FormValue("password")))
-		if err != nil {
-			http.Error(w, fmt.Sprintf("{ \"error\": \"%s\" }", "Wrong password"), 401)
-			return
+func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	email := "michael@email.com"
+	password := "P@ssw0rd!"
+	u := &User{Email: email}
+	err := GetUser(db, u)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, err.Error())
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
-		token := jwt.New(jwt.SigningMethodHS256)
-		claims := token.Claims.(jwt.MapClaims)
-		claims["email"] = email
-		claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-		tokenString, _ := token.SignedString(SIGN_KEY)
-		w.Write([]byte(fmt.Sprintf("{ \"access_token\": \"%s\" }", tokenString)))
-	} else {
-		http.Error(w, fmt.Sprintf("{ \"error\": \"%s\" }", "Email not found"), 401)
 		return
 	}
+	if err == nil {
+		err = u.CheckPassword(password)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		// token := jwt.New(jwt.SigningMethodHS256)
+		// claims := token.Claims.(jwt.MapClaims)
+		// claims["email"] = email
+		// claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+		// tokenString, _ := token.SignedString(SIGN_KEY)
+		// w.Write([]byte(fmt.Sprintf("{ \"access_token\": \"%s\" }", tokenString)))
+	}
+	respondWithJSON(w, http.StatusOK, u)
 }
 
-func Register(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	var err error
-	email := strings.ToLower(r.FormValue("email"))
-	exists, err := redis.Bool(conn.Do("EXISTS", email))
+	email := "fico@email.com"
+	username := "fico"
+	password := "P@ssw0rd!"
+	u := User{Email: email, Username: username}
+	exists, err := IsEmailExists(db, u)
 	if exists {
-		w.Write([]byte(fmt.Sprintf("{ \"error\": \"%s\" }", "Email taken")))
-		return
+		respondWithError(w, http.StatusInternalServerError, "Email already exists")
 	}
-	password := r.FormValue("password")
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password),
-		bcrypt.DefaultCost)
+	exists, err = IsUsernameExists(db, u)
+	if exists {
+		respondWithError(w, http.StatusInternalServerError, "Username already exists")
+	}
+	u.SetPassword(password)
 	if err != nil {
-		panic(err)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-	_, err = conn.Do("SET", email, string(hashedPassword[:]))
+
+	err = SaveUser(db, &u)
 	if err != nil {
-		log.Println(err)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	tokenString, _ := token.SignedString(SIGN_KEY)
-	w.Write([]byte(fmt.Sprintf("{ \"access_token\": \"%s\" }", tokenString)))
+	// token := jwt.New(jwt.SigningMethodHS256)
+	// claims := token.Claims.(jwt.MapClaims)
+	// claims["email"] = email
+	// claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// tokenString, _ := token.SignedString(SIGN_KEY)
+	// w.Write([]byte(fmt.Sprintf("{ \"access_token\": \"%s\" }", tokenString)))
+	respondWithJSON(w, http.StatusOK, u)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

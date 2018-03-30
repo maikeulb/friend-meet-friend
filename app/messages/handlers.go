@@ -27,6 +27,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// } compare with userID
 
 	var m []Message
+
 	messages, err := GetSentMessagesForUser(db, m, userID)
 	if err != nil {
 		switch err {

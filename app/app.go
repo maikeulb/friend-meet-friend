@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
+	// "time"
 
 	"github.com/gorilla/mux"
+	"github.com/maikeulb/friend-meet-friend/app/auth"
 	"github.com/maikeulb/friend-meet-friend/app/followings"
 	"github.com/maikeulb/friend-meet-friend/app/messages"
 	"github.com/maikeulb/friend-meet-friend/app/users"
@@ -37,6 +38,7 @@ func (a *App) Initialize(host, port, user, password, dbname string) {
 func (a *App) Run(addr string) {
 	fmt.Println("Listening on port: 5000")
 	fmt.Println("/api/login")
+	fmt.Println("/api/register")
 	fmt.Println("/api/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
@@ -50,7 +52,8 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) InitializeRoutes() {
-	a.Router.HandleFunc("/api/login", a.Login)
+	a.Router.HandleFunc("/api/login", a.LoginUser).Methods("POST")
+	a.Router.HandleFunc("/api/register", a.RegisterUser).Methods("POST")
 	a.Router.HandleFunc("/api/status", a.Status)
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
@@ -113,11 +116,19 @@ func (a *App) UnFollowUser(w http.ResponseWriter, r *http.Request) {
 	followings.UnFollow(a.DB, w, r)
 }
 
-func (a *App) Login(w http.ResponseWriter, r *http.Request) {
-	expiration := time.Now().Add(365 * 24 * time.Hour)
-	cookie := http.Cookie{Name: "username", Value: "demo@gmail.com", Expires: expiration}
-	http.SetCookie(w, &cookie)
+func (a *App) LoginUser(w http.ResponseWriter, r *http.Request) {
+	auth.LoginUser(a.DB, w, r)
 }
+
+func (a *App) RegisterUser(w http.ResponseWriter, r *http.Request) {
+	auth.RegisterUser(a.DB, w, r)
+}
+
+// func (a *App) Login(w http.ResponseWriter, r *http.Request) {
+// 	expiration := time.Now().Add(365 * 24 * time.Hour)
+// 	cookie := http.Cookie{Name: "username", Value: "demo@gmail.com", Expires: expiration}
+// 	http.SetCookie(w, &cookie)
+// }
 
 func (a *App) Status(w http.ResponseWriter, r *http.Request) {
 	if username := r.Context().Value("Username"); username != nil {
