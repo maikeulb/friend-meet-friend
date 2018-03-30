@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	// "fmt"
 	_ "github.com/lib/pq"
-	"log"
+	// "log"
 )
 
 func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
@@ -33,7 +33,10 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 
 	rows, err := db.Query(query)
 
-	if err != nil { //what should I check?
+	if err == sql.ErrNoRows {
+		return nil, err
+	}
+	if err != nil {
 		return nil, err
 	}
 
@@ -125,12 +128,12 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 	u.Followees = append(u.Followees, *u3)
 
 	if err == sql.ErrNoRows {
-		log.Printf("No users")
+		return u, err //check this
+	}
+	if err != nil {
+		return u, err
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
 	return u, nil
 }
 
@@ -144,8 +147,11 @@ func UpdateUserProfile(db *sql.DB, u User) error {
             WHERE id = $4;`
 
 	_, err := db.Exec(command, u.Email, u.Interests, u.Borough, u.ID)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func Contains(s []int, e int) bool {

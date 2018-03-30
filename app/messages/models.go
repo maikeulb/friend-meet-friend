@@ -38,9 +38,9 @@ func (m Message) MarshalJSON() ([]byte, error) {
 
 func (m *Message) UnmarshalJSON(data []byte) error {
 	fmt.Println("unmarshalling")
-	var jm MessageRequest
+	var jm *MessageRequest
 
-	if err := json.Unmarshal(data, &jm); err != nil {
+	if err := json.Unmarshal(data, jm); err != nil {
 		return err
 	}
 	if err := jm.validate(); err != nil {
