@@ -7,29 +7,28 @@ import (
 	// "log"
 )
 
-func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
-
+func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
 	query := `
-    SELECT u.id,
-    u.username,
-    u.email,
-    u.interests,
-    u.borough,
-    u.created_on,
-    u.last_active,
-    f.follower_id,
-    u2.username,
-    f.followee_id,
-    u3.username
-    FROM users as u
-    INNER JOIN followings as f
-    ON u.id = f.follower_id
-    OR u.id = f.followee_id
-    INNER JOIN users as u2
-    ON u2.id = f.follower_id
-    INNER JOIN users as u3
-    ON u3.id = f.followee_id
-    ORDER BY u.created_on;`
+        SELECT u.id,
+        u.username,
+        u.email,
+        u.interests,
+        u.borough,
+        u.created_on,
+        u.last_active,
+        f.follower_id,
+        u2.username,
+        f.followee_id,
+        u3.username
+        FROM users as u
+        INNER JOIN followings as f
+        ON u.id = f.follower_id
+        OR u.id = f.followee_id
+        INNER JOIN users as u2
+        ON u2.id = f.follower_id
+        INNER JOIN users as u3
+        ON u3.id = f.followee_id
+        ORDER BY u.created_on;`
 
 	rows, err := db.Query(query)
 
@@ -42,13 +41,13 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 
 	defer rows.Close()
 
-	users := []*User{}
+	users := []User{}
 	ids := []int{}
 
 	for rows.Next() {
-		var u = &User{}
-		var u2 = &Followers{}
-		var u3 = &Followees{}
+		var u = User{}
+		var u2 = Followers{}
+		var u3 = Followees{}
 		if err := rows.Scan(
 			&u.ID,
 			&u.Username,
@@ -66,17 +65,17 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 
 		if Contains(ids, u.ID) {
 			if IsUnique(u.ID, u2.ID) {
-				users[len(users)-1].Followers = append(users[len(users)-1].Followers, *u2)
+				users[len(users)-1].Followers = append(users[len(users)-1].Followers, u2)
 			}
 			if IsUnique(u.ID, u3.ID) {
-				users[len(users)-1].Followees = append(users[len(users)-1].Followees, *u3)
+				users[len(users)-1].Followees = append(users[len(users)-1].Followees, u3)
 			}
 		} else {
 			if IsUnique(u.ID, u2.ID) {
-				u.Followers = append(u.Followers, *u2)
+				u.Followers = append(u.Followers, u2)
 			}
 			if IsUnique(u.ID, u3.ID) {
-				u.Followees = append(u.Followees, *u3)
+				u.Followees = append(u.Followees, u3)
 			}
 			users = append(users, u)
 		}
@@ -86,7 +85,6 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 }
 
 func GetUserProfile(db *sql.DB, u User) (User, error) {
-
 	query := `
         SELECT u.id,
         u.username,
@@ -109,8 +107,8 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
         ON u3.id = f.followee_id
         WHERE u.id=$1`
 
-	var u2 = &Followers{}
-	var u3 = &Followees{}
+	var u2 = Followers{}
+	var u3 = Followees{}
 	err := db.QueryRow(query, u.ID).Scan(
 		&u.ID,
 		&u.Username,
@@ -124,11 +122,11 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 		&u3.ID,
 		&u3.Username)
 
-	u.Followers = append(u.Followers, *u2)
-	u.Followees = append(u.Followees, *u3)
+	u.Followers = append(u.Followers, u2)
+	u.Followees = append(u.Followees, u3)
 
 	if err == sql.ErrNoRows {
-		return u, err //check this
+		return u, err
 	}
 	if err != nil {
 		return u, err

@@ -12,8 +12,7 @@ import (
 )
 
 func GetUsers(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
-	var u []*User
+	var u []User
 	users, err := GetUserProfiles(db, u)
 	if err != nil {
 		switch err {
@@ -38,7 +37,7 @@ func GetUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := User{ID: userID}
-	profile, err := GetUserProfile(db, u)
+	user, err := GetUserProfile(db, u)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -49,7 +48,7 @@ func GetUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, profile)
+	respondWithJSON(w, http.StatusOK, user)
 }
 
 func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) { // isn't working right

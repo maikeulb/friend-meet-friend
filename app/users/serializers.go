@@ -6,36 +6,23 @@ import (
 )
 
 type UserRequest struct {
-	ID        int    `json:"id,omitempty"`
-	Username  string `json:"username,omitempty"`
-	Email     string `json:"email,omitempty"`
 	Interests string `json:"interests,omitempty"`
 	Borough   string `json:"borough,omitempty"`
-	// CreatedOn  time.Time `json:"createdOn,omitempty"`
-	// LastActive time.Time `json:"lastActive,omitempty"`
 }
 
 func (ju UserRequest) User() User {
 	var u User
-	u.ID = ju.ID
-	u.Username = ju.Username
-	u.Email = ju.Email
 	u.Interests = ju.Interests
 	u.Borough = ju.Borough
-	// u.CreatedOn = &ju.CreatedOn
-	// u.LastActive = &ju.LastActive
 
 	return u
 }
 
 func (ju *UserRequest) validate() error {
-	// if ju.ID <= 0 {
-	// return errors.New("ID should not be empty")
-	// }
-	// if ju.Username <= "" {
+	// if ju.Interests <= "" {
 	// return errors.New("Username should not be empty")
 	// }
-	// if ju.Interests <= "" {
+	// if ju.Boroughs <= "" {
 	// return errors.New("Body should not be empty")
 	// }
 

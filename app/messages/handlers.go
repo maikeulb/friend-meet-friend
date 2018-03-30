@@ -26,7 +26,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	//  return
 	// } compare with userID
 
-	var m []*Message
+	var m []Message
 	messages, err := GetSentMessagesForUser(db, m, userID)
 	if err != nil {
 		switch err {
@@ -56,7 +56,7 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	//  return
 	// } compare with userID
 
-	var m []*Message
+	var m []Message
 	messages, err := GetRecievedMessagesForUser(db, m, userID)
 	if err != nil {
 		switch err {
