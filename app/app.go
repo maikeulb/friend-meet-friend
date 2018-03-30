@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/maikeulb/friend-meet-friend/app/followings"
 	"github.com/maikeulb/friend-meet-friend/app/messages"
 	"github.com/maikeulb/friend-meet-friend/app/users"
 )
@@ -43,6 +44,8 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/users/{userId}/messages/{id}")
 	fmt.Println("/api/users/{userId}/messages/sent")
 	fmt.Println("/api/users/{userId}/messages/recieved")
+	fmt.Println("/api/users/{userId}/follow")
+	// fmt.Println("/api/users/{userId}/unfollow")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
@@ -56,6 +59,8 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.GetUserMessage).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.GetUserSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/follow", a.FollowUser).Methods("POST")
+	// a.Router.HandleFunc("/api/users/{userId:[0-9]+}/unfollow", a.UnFollowUser).Methods("POST")
 	a.Router.Use(a.AddContextMiddleware)
 }
 
@@ -99,6 +104,14 @@ func (a *App) GetUserSentMessages(w http.ResponseWriter, r *http.Request) {
 func (a *App) GetUserRecievedMessages(w http.ResponseWriter, r *http.Request) {
 	messages.GetRecievedMessages(a.DB, w, r)
 }
+
+func (a *App) FollowUser(w http.ResponseWriter, r *http.Request) {
+	followings.Follow(a.DB, w, r)
+}
+
+// func (a *App) UnFollowUser(w http.ResponseWriter, r *http.Request) {
+// 	followings.UnFollow(a.DB, w, r)
+// }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	expiration := time.Now().Add(365 * 24 * time.Hour)

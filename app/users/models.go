@@ -31,10 +31,10 @@ type Followees struct {
 	Username string
 }
 
-type Following struct {
-	FollowerID int
-	FolloweeID int
-}
+// type Following struct {
+// 	FollowerID int
+// 	FolloweeID int
+// }
 
 func (u User) MarshalJSON() ([]byte, error) {
 	fmt.Println("marshalling")
