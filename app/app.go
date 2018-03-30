@@ -50,6 +50,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/status", a.Status)
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.UpdateUser).Methods("PUT")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.GetUserMessage).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.GetUserSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
@@ -75,6 +76,10 @@ func (a *App) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) GetUser(w http.ResponseWriter, r *http.Request) {
 	users.GetUser(a.DB, w, r)
+}
+
+func (a *App) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	users.UpdateUser(a.DB, w, r)
 }
 
 func (a *App) GetUserMessage(w http.ResponseWriter, r *http.Request) {

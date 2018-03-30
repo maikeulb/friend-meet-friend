@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -51,23 +52,31 @@ func GetUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, profile)
 }
 
-// func EditMyProfile(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
+func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) { // isn't working right
+	vars := mux.Vars(r)
 
-// decoder := json.NewDecoder(r.Body)
-// if err := decoder.Decode(&u); err != nil {
-// 	respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-// 	return
-// }
-// defer r.Body.Close()
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
 
-// 	if err := u.editProfile(db, u); err != nil {
-// 		respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	u := User{ID: userID}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&u); err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer r.Body.Close()
 
-// 	respondWithJSON(w, http.StatusCreated, u)
-// }
+	fmt.Println(u)
+	if err := UpdateUserProfile(db, u); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, u)
+}
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})

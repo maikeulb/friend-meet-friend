@@ -51,7 +51,7 @@ func GetUserProfiles(db *sql.DB, u []*User) ([]*User, error) {
 			&u.Username,
 			&u.Email,
 			&u.Interests,
-			&u.Neighborhood,
+			&u.Borough,
 			&u.CreatedOn,
 			&u.LastActive,
 			&u2.ID,
@@ -113,7 +113,7 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 		&u.Username,
 		&u.Email,
 		&u.Interests,
-		&u.Neighborhood,
+		&u.Borough,
 		&u.CreatedOn,
 		&u.LastActive,
 		&u2.ID,
@@ -134,43 +134,19 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 	return u, nil
 }
 
-// func (model *User) editProfile(db *sql.DB) (User, error) {
+func UpdateUserProfile(db *sql.DB, u User) error {
 
-//  query := `
+	command := `
+            UPDATE users
+            SET email = $1,
+                interests = $2,
+                borough = $3
+            WHERE id = $4;`
 
-//             SELECT u.id,
-//             u.username,
-//             u.last_active,
-//             u.bio,
-//             u.created_on,
-//             f.follower_id,
-//             f.followee_id,
-//             u2.username,
-//             u3.username
-//             FROM users u
-//             INNER JOIN followings as f
-//             ON u.id = f.follower_id
-//             OR u.id = f.followee_id
-//             INNER JOIN users as u2
-//             ON u2.id = f.follower_id
-//             INNER JOIN users as u3
-//             ON u3.id = f.followee_id
-//             WHERE id=$1`
+	_, err := db.Exec(command, u.Email, u.Interests, u.Borough, u.ID)
 
-//  return db.QueryRow(query, m.ID).Scan(
-//      &m.SenderID,
-//      &m.RecipientID,
-//      &m.Body,
-//      &m.IsRead)
-
-//  if err == sql.ErrNoRows {
-//      log.Printf("No users")
-//  }
-
-//  if err != nil {
-//      log.Fatal(err)
-//  }
-// }
+	return err
+}
 
 func Contains(s []int, e int) bool {
 	for _, a := range s {

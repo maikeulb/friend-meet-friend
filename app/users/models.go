@@ -12,10 +12,10 @@ type User struct {
 	Email    string
 	// PasswordHash     []byte
 	// PasswordSalt     []byte
-	Interests    string
-	Neighborhood string
-	CreatedOn    time.Time
-	LastActive   time.Time
+	Interests  string
+	Borough    string
+	CreatedOn  time.Time
+	LastActive time.Time
 	// MessagesSent     []MessagesSent
 	// MessagesRecieved []MessagesRecieved
 	Followers []Followers
