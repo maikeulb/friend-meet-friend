@@ -4,10 +4,10 @@ CREATE TABLE users (
     email varchar(50) NOT NULL,
     password_hash bytea NULL,
     password_salt bytea NULL,
-    interests TEXT NOT NULL,
-    borough varchar(50) NOT NULL,
-    created_on timestamp NOT NULL,
-    last_active timestamp NOT NULL
+    interests TEXT NULL,
+    borough varchar(50) NULL,
+    created_on timestamp NULL,
+    last_active timestamp NULL
 );
 
 CREATE TABLE messages (
@@ -48,3 +48,10 @@ FOREIGN KEY (followee_id)
 REFERENCES users(id)
 ON DELETE CASCADE;
 
+ALTER TABLE users
+ALTER COLUMN created_on
+SET DEFAULT now();
+
+ALTER TABLE users
+ALTER COLUMN last_active
+SET DEFAULT now();
