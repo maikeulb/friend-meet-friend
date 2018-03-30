@@ -21,15 +21,12 @@ func (jm MessageRequest) Message(m Message) Message {
 }
 
 func (jm *MessageRequest) validate() error {
-	// if jm.SenderID <= 0 {
-	// return errors.New("SenderID should not be empty")
-	// }
-	// if jm.RecipientID <= 0 {
-	// return errors.New("RecipientID should not be empty")
-	// }
-	// if jm.Body <= "" {
-	// return errors.New("Body should not be empty")
-	// }
+	if jm.RecipientID <= 0 {
+		return errors.New("RecipientID must not be empty")
+	}
+	if jm.Body <= "" {
+		return errors.New("Body must not be empty")
+	}
 
 	return nil
 }
