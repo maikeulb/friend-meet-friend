@@ -39,6 +39,7 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
+	fmt.Println("/api/users/{userId}/messages")
 	fmt.Println("/api/users/{userId}/messages/{id}")
 	fmt.Println("/api/users/{userId}/messages/sent")
 	fmt.Println("/api/users/{userId}/messages/recieved")
@@ -51,6 +52,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.UpdateUser).Methods("PUT")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages", a.SendUserMessage).Methods("POST")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.GetUserMessage).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.GetUserSentMessages).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
@@ -84,6 +86,10 @@ func (a *App) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) GetUserMessage(w http.ResponseWriter, r *http.Request) {
 	messages.GetMessage(a.DB, w, r)
+}
+
+func (a *App) SendUserMessage(w http.ResponseWriter, r *http.Request) {
+	messages.SendMessage(a.DB, w, r)
 }
 
 func (a *App) GetUserSentMessages(w http.ResponseWriter, r *http.Request) {

@@ -1,7 +1,7 @@
 package messages
 
 import (
-	"errors"
+	// "errors"
 	"time"
 )
 
@@ -12,26 +12,24 @@ type MessageRequest struct {
 	Timestamp   time.Time `json:"timestamp,omitempty"`
 }
 
-func (jm MessageRequest) Message() Message {
-	var m Message
-	m.SenderID = jm.SenderID
+func (jm MessageRequest) Message(m Message) Message {
 	m.RecipientID = jm.RecipientID
 	m.Body = jm.Body
-	m.Timestamp = jm.Timestamp
+	m.Timestamp = time.Now()
 
 	return m
 }
 
 func (jm *MessageRequest) validate() error {
-	if jm.SenderID <= 0 {
-		return errors.New("SenderID should not be empty")
-	}
-	if jm.RecipientID <= 0 {
-		return errors.New("RecipientID should not be empty")
-	}
-	if jm.Body <= "" {
-		return errors.New("Body should not be empty")
-	}
+	// if jm.SenderID <= 0 {
+	// return errors.New("SenderID should not be empty")
+	// }
+	// if jm.RecipientID <= 0 {
+	// return errors.New("RecipientID should not be empty")
+	// }
+	// if jm.Body <= "" {
+	// return errors.New("Body should not be empty")
+	// }
 
 	return nil
 }

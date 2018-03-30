@@ -3,6 +3,7 @@ package messages
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -70,7 +71,7 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	userID := 2 // get from context
+	// userID := 2 // get from context
 
 	vars := mux.Vars(r)
 	userID, err := strconv.Atoi(vars["userId"])
@@ -94,38 +95,31 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-//     vars := mux.Vars(r)
-//     m := &Message{}
-//     defer r.Body.Close()
+func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 
-//     if err := json.NewDecoder(r.Body).Decode(m); err != nil
-//     respondWithError(w, http.StatusInternalServerError, err.Error())
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+	fmt.Println("initialize message")
+	m := Message{SenderID: userID}
+	defer r.Body.Close()
 
-//     if err := SendMessage(db, m); err != nil {
-//         respondWithError(w, http.StatusInternalServerError, err.Error())
-//         return
+	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-//         respondWithJSON(w, http.StatusCreated, m)
-//     }
+	fmt.Println("after decoding message")
+	if err := SendMessageToUser(db, m); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 
-//     func DeleteMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-//         vars := mux.Vars(r)
-
-//         id, err := strconv.Atoi(vars["id"])
-//         if err != nil {
-//             respondWithError(w, http.StatusBadRequest, "Invalid Message ID")
-//             return
-//         }
-
-//         m := Message{ID: id}
-//         if err := DeleteMessage(db, m); err != nil {
-//             respondWithError(w, http.StatusInternalServerError, err.Error())
-//             return
-//         }
-
-//         respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
-//     }
+	}
+	respondWithJSON(w, http.StatusCreated, m)
+}
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})

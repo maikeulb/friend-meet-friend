@@ -2,6 +2,8 @@ package messages
 
 import (
 	"database/sql"
+	"fmt"
+
 	_ "github.com/lib/pq"
 )
 
@@ -111,36 +113,17 @@ func GetRecievedMessagesForUser(db *sql.DB, m []*Message, userID int) ([]*Messag
 	return messages, nil
 }
 
+func SendMessageToUser(db *sql.DB, m Message) error {
+	command := `
+        INSERT INTO messages (body, sender_id, recipient_id, timestamp)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id`
 
-// func SendMssages(db *sql.DB, m Message) error {
+	err := db.QueryRow(command, m.Body, m.SenderID, m.RecipientID, m.Timestamp).Scan(&m.ID)
 
-// 	command := `
-//         INSERT INTO messages (body, senderID, recipientID)
-//         VALUES ($1, $2, $3)
-//             m.body,
-//             m.senderID,
-//             m.recipientID,
-//             us.id,
-//             us.username,
-//             ur.id,
-//             ur.username`,
-//             m.ID, m.senderID, m.recipeintID).Scan(
-//                 &m.ID)
-//                 &m.SenderID)
-//                 &m.RecipientID)
+	if err != nil {
+		return err
+	}
 
-//  if err != nil {
-//      return nil, err
-//  }
-
-//  return nil
-// }
-
-// func DeleteMssages(db *sql.DB, m Message) error {
-
-//  if err != nil {
-//      return nil, err
-//  }
-
-//  return nil
-// }
+	return nil
+}

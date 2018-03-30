@@ -47,6 +47,6 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	*m = jm.Message()
+	*m = jm.Message(*m)
 	return nil
 }
