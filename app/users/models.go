@@ -15,8 +15,8 @@ type User struct {
 	PasswordHash []byte
 	Interests    string
 	Borough      string
-	CreatedOn    time.Time
-	LastActive   time.Time
+	CreatedOn    *time.Time
+	LastActive   *time.Time
 	Followers    []Followers
 	Followees    []Followees
 }

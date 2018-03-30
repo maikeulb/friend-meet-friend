@@ -6,13 +6,13 @@ import (
 )
 
 type UserRequest struct {
-	ID         int       `json:"id,omitempty"`
-	Username   string    `json:"username,omitempty"`
-	Email      string    `json:"email,omitempty"`
-	Interests  string    `json:"interests,omitempty"`
-	Borough    string    `json:"borough,omitempty"`
-	CreatedOn  time.Time `json:"createdOn,omitempty"`
-	LastActive time.Time `json:"lastActive,omitempty"`
+	ID        int    `json:"id,omitempty"`
+	Username  string `json:"username,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Interests string `json:"interests,omitempty"`
+	Borough   string `json:"borough,omitempty"`
+	// CreatedOn  time.Time `json:"createdOn,omitempty"`
+	// LastActive time.Time `json:"lastActive,omitempty"`
 }
 
 func (ju UserRequest) User() User {
@@ -22,8 +22,8 @@ func (ju UserRequest) User() User {
 	u.Email = ju.Email
 	u.Interests = ju.Interests
 	u.Borough = ju.Borough
-	u.CreatedOn = ju.CreatedOn
-	u.LastActive = ju.LastActive
+	// u.CreatedOn = &ju.CreatedOn
+	// u.LastActive = &ju.LastActive
 
 	return u
 }
@@ -48,8 +48,8 @@ type UserResponse struct {
 	Email      string              `json:"email,omitempty"`
 	Interests  string              `json:"interests,omitempty"`
 	Borough    string              `json:"borough,omitempty"`
-	CreatedOn  time.Time           `json:"createdOn,omitempty"`
-	LastActive time.Time           `json:"lastActive,omitempty"`
+	CreatedOn  *time.Time          `json:"createdOn,omitempty"`
+	LastActive *time.Time          `json:"lastActive,omitempty"`
 	Followers  []FollowersResponse `json:"followers,omitempty"`
 	Followees  []FolloweesResponse `json:"followees,omitempty"`
 }

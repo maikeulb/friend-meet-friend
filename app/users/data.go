@@ -137,14 +137,22 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 	return u, nil
 }
 
-func UpdateUserProfile(db *sql.DB, u User) error {
-
+func UpdateUserProfile(db *sql.DB, u *User) error {
 	command := `
-            UPDATE users
-            SET email = $1,
-                interests = $2,
-                borough = $3
-            WHERE id = $4;`
+        UPDATE users as u
+        SET email=case
+                when $1='' then u.email
+                else $1
+            end,
+            interests=case
+               when $2='' then u.interests
+               else $2
+            end,
+            borough=case
+               when $3='' then u.borough
+               else $3
+            end
+        WHERE id = $4;`
 
 	_, err := db.Exec(command, u.Email, u.Interests, u.Borough, u.ID)
 	if err != nil {

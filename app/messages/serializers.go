@@ -1,7 +1,7 @@
 package messages
 
 import (
-	// "errors"
+	"errors"
 	"time"
 )
 

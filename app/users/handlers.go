@@ -3,7 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"net/http"
 	"strconv"
 
@@ -61,15 +61,14 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) { // isn't w
 		return
 	}
 
-	u := User{ID: userID}
+	u := &User{ID: userID}
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&u); err != nil {
+	if err := decoder.Decode(u); err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer r.Body.Close()
 
-	fmt.Println(u)
 	if err := UpdateUserProfile(db, u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
