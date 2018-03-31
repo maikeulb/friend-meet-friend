@@ -8,10 +8,11 @@ import (
 type UserRequest struct {
 	Interests string `json:"interests,omitempty"`
 	Borough   string `json:"borough,omitempty"`
+	Name      string `json:"name,omitempty"`
 }
 
-func (ju UserRequest) User() User {
-	var u User
+func (ju UserRequest) User(u User) User {
+	u.Name = ju.Name
 	u.Interests = ju.Interests
 	u.Borough = ju.Borough
 
@@ -30,8 +31,8 @@ func (ju *UserRequest) validate() error {
 }
 
 type UserResponse struct {
-	ID         int                 `json:"id,omitempty"`
-	Name       string              `json:"name,omitempty"`
+	ID   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 	// Email      string              `json:"email,omitempty"`
 	Interests  string              `json:"interests,omitempty"`
 	Borough    string              `json:"borough,omitempty"`

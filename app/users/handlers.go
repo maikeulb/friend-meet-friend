@@ -65,12 +65,11 @@ func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := &User{ID: userID}
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(u); err != nil {
+	defer r.Body.Close()
+	if err := json.NewDecoder(r.Body).Decode(u); err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	defer r.Body.Close()
 
 	if err := UpdateUserProfile(db, u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())

@@ -45,6 +45,6 @@ func (u *User) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	*u = ju.User()
+	*u = ju.User(*u)
 	return nil
 }
