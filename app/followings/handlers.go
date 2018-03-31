@@ -19,6 +19,11 @@ func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if followerID == followeeID {
+		respondWithError(w, http.StatusForbidden, "You cannot follow yourself")
+		return
+	}
+
 	f := &Following{FollowerID: followerID, FolloweeID: followeeID}
 	if err := AddFollowing(db, f); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -34,6 +39,11 @@ func UnFollow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	followeeID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
+		return
+	}
+
+	if followerID == followeeID {
+		respondWithError(w, http.StatusForbidden, "You cannot unfollow yourself")
 		return
 	}
 

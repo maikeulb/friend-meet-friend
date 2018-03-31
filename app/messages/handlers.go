@@ -3,7 +3,7 @@ package messages
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"net/http"
 	// "reflect"
 	"strconv"
@@ -20,8 +20,7 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-	fmt.Println(currentUserID)
-	fmt.Println(userID)
+
 	if currentUserID != userID {
 		respondWithError(w, http.StatusForbidden, "Forbidden")
 		return
@@ -100,9 +99,8 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	currentUserID := r.Context().Value("userId")
-	fmt.Println(currentUserID)
 	userID, err := strconv.Atoi(vars["userId"])
-	fmt.Println(userID)
+
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
@@ -113,7 +111,7 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := &Message{SenderID: userID}
-	fmt.Println(m)
+
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(m); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
