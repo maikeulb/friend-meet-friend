@@ -20,7 +20,7 @@ func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if followerID == followeeID {
-		respondWithError(w, http.StatusForbidden, "You cannot follow yourself")
+		respondWithError(w, http.StatusBadRequest, "You cannot follow yourself")
 		return
 	}
 
@@ -43,7 +43,7 @@ func UnFollow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if followerID == followeeID {
-		respondWithError(w, http.StatusForbidden, "You cannot unfollow yourself")
+		respondWithError(w, http.StatusBadRequest, "You cannot unfollow yourself")
 		return
 	}
 

@@ -20,20 +20,13 @@ func (ju UserRequest) User(u User) User {
 }
 
 func (ju *UserRequest) validate() error {
-	// if ju.Interests <= "" {
-	// return errors.New("Name should not be empty")
-	// }
-	// if ju.Boroughs <= "" {
-	// return errors.New("Body should not be empty")
-	// }
 
 	return nil
 }
 
 type UserResponse struct {
-	ID   int    `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-	// Email      string              `json:"email,omitempty"`
+	ID         int                 `json:"id,omitempty"`
+	Name       string              `json:"name,omitempty"`
 	Interests  string              `json:"interests,omitempty"`
 	Borough    string              `json:"borough,omitempty"`
 	CreatedOn  *time.Time          `json:"createdOn,omitempty"`
@@ -46,7 +39,6 @@ func Response(u User) UserResponse {
 	var ju UserResponse
 	ju.ID = u.ID
 	ju.Name = u.Name
-	// ju.Email = u.Email
 	ju.Interests = u.Interests
 	ju.Borough = u.Borough
 	ju.CreatedOn = u.CreatedOn

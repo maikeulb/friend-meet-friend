@@ -9,8 +9,6 @@ import (
 type User struct {
 	ID   int
 	Name string
-	// Email        string
-	// PasswordHash []byte
 	Interests  string
 	Borough    string
 	CreatedOn  *time.Time
