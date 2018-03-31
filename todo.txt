@@ -1,19 +1,2 @@
 crud
-
-  users
--create (later)
-  -read
-  -update (in progress)
--delete (not supported)
-
-  messages
-  -create
-  -read
-  -update (not supported
-      -delete (not supported)
-
-      prevent user from sending messages to them selvs
-      prevent user from following themselves
-      check all status's
-
-      set timestamp
+-clean up config files

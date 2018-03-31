@@ -1,13 +1,13 @@
 package app
 
 import (
-	"context"
+	// "context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	"reflect"
-	"strings"
+	// "reflect"
+	// "strings"
 
 	"github.com/gorilla/mux"
 	"github.com/maikeulb/friend-meet-friend/app/auth"
@@ -58,7 +58,7 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/api/status", a.Status)
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.ValidationMiddleware(a.UpdateUser)).Methods("PUT")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.ValidationMiddleware(a.UpdateUser)).Methods("PATCH")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages", a.ValidationMiddleware(a.SendUserMessage)).Methods("POST")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.ValidationMiddleware(a.GetUserMessage)).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.ValidationMiddleware(a.GetUserSentMessages)).Methods("GET")
@@ -119,26 +119,4 @@ func (a *App) Status(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Not Logged in"))
 	}
-}
-
-func (a *App) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenString := r.Header.Get("Authorization")
-		if len(tokenString) == 0 {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Missing Authorization Header"))
-			return
-		}
-		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
-		claims, err := auth.ParseToken(tokenString)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Error verifying JWT token: " + err.Error()))
-			return
-		}
-		userID := int(claims["userId"].(float64))
-		fmt.Println(reflect.TypeOf(userID))
-		context := context.WithValue(r.Context(), "userId", userID)
-		next.ServeHTTP(w, r.WithContext(context))
-	})
 }
