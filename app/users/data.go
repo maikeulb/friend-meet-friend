@@ -80,7 +80,7 @@ func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
 	return users, nil
 }
 
-func GetUserProfile(db *sql.DB, u User) (User, error) {
+func GetUserProfile(db *sql.DB, u User) ([]User, error) {
 	query := `
         SELECT u.id,
         u.name,
@@ -100,50 +100,75 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
         ON u2.id = f.follower_id
         INNER JOIN users as u3
         ON u3.id = f.followee_id
-        WHERE u.id=$1`
+        WHERE u.id=$1 `
 
-	var u2 = Followers{}
-	var u3 = Followees{}
-	err := db.QueryRow(query, u.ID).Scan(
-		&u.ID,
-		&u.Name,
-		&u.Interests,
-		&u.Borough,
-		&u.CreatedOn,
-		&u.LastActive,
-		&u2.ID,
-		&u2.Name,
-		&u3.ID,
-		&u3.Name)
-
-	u.Followers = append(u.Followers, u2)
-	u.Followees = append(u.Followees, u3)
-
+	rows, err := db.Query(query, u.ID)
 	if err == sql.ErrNoRows {
-		return u, err
+		return nil, err
 	}
 	if err != nil {
-		return u, err
+		return nil, err
 	}
 
-	return u, nil
+	defer rows.Close()
+
+	users := []User{}
+	ids := []int{}
+
+	for rows.Next() {
+		var u = User{}
+		var u2 = Followers{}
+		var u3 = Followees{}
+		if err := rows.Scan(
+			&u.ID,
+			&u.Name,
+			&u.Interests,
+			&u.Borough,
+			&u.CreatedOn,
+			&u.LastActive,
+			&u2.ID,
+			&u2.Name,
+			&u3.ID,
+			&u3.Name); err != nil {
+			return nil, err
+		}
+
+		if Contains(ids, u.ID) {
+			if IsUnique(u.ID, u2.ID) {
+				users[len(users)-1].Followers = append(users[len(users)-1].Followers, u2)
+			}
+			if IsUnique(u.ID, u3.ID) {
+				users[len(users)-1].Followees = append(users[len(users)-1].Followees, u3)
+			}
+		} else {
+			if IsUnique(u.ID, u2.ID) {
+				u.Followers = append(u.Followers, u2)
+			}
+			if IsUnique(u.ID, u3.ID) {
+				u.Followees = append(u.Followees, u3)
+			}
+			users = append(users, u)
+		}
+		ids = append(ids, u.ID)
+	}
+	return users, nil
 }
 
 func UpdateUserProfile(db *sql.DB, u *User) error {
 	command := `
         UPDATE users as u
         SET name=case
-                when $1='' then u.name
-                else $1
-            end,
-            interests=case
-               when $2='' then u.interests
-               else $2
-            end,
-            borough=case
-               when $3='' then u.borough
-               else $3
-            end
+        when $1='' then u.name
+        else $1
+        end,
+        interests=case
+        when $2='' then u.interests
+        else $2
+        end,
+        borough=case
+        when $3='' then u.borough
+        else $3
+        end
         WHERE id = $4;`
 
 	_, err := db.Exec(command, u.Name, u.Interests, u.Borough, u.ID)
