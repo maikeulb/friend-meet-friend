@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -30,7 +31,7 @@ func GenerateToken(user *User) error {
 		"userId": user.ID,
 		"exp":    time.Now().Add(time.Hour * 5).Unix(),
 	})
-
+	fmt.Println(reflect.TypeOf(user.ID))
 	tokenString, err := token.SignedString(SIGN_KEY)
 	if err != nil {
 		return err

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	// "reflect"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,19 +15,17 @@ import (
 func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	currentUserID := r.Context().Value("userId")
-	fmt.Println(currentUserID)
 	userID, err := strconv.Atoi(vars["userId"])
-	fmt.Println(userID)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
 	fmt.Println(currentUserID)
 	fmt.Println(userID)
-	// if currentUserID.(int) != userID.(int) {
-	// respondWithError(w, http.StatusForbidden, "Forbidden")
-	// return
-	// }
+	if currentUserID != userID {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
+		return
+	}
 
 	var m []Message
 	messages, err := GetSentMessagesForUser(db, m, userID)
@@ -101,7 +100,9 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	currentUserID := r.Context().Value("userId")
+	fmt.Println(currentUserID)
 	userID, err := strconv.Atoi(vars["userId"])
+	fmt.Println(userID)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
@@ -112,8 +113,8 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := &Message{SenderID: userID}
+	fmt.Println(m)
 	defer r.Body.Close()
-
 	if err := json.NewDecoder(r.Body).Decode(m); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

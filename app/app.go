@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -42,12 +43,12 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
-	fmt.Println("/api/users/{userId}/messages-protected")
+	fmt.Println("/api/users/{userId}/messages-protected-broken")
 	fmt.Println("/api/users/{userId}/messages/{id}-protected")
 	fmt.Println("/api/users/{userId}/messages/sent-protected")
 	fmt.Println("/api/users/{userId}/messages/recieved-protected")
-	fmt.Println("/api/users/{userId}/follow-protected")
-	fmt.Println("/api/users/{userId}/unfollow-protected")
+	fmt.Println("/api/users/{userId}/follow-protected ok")
+	fmt.Println("/api/users/{userId}/unfollow-protected ok")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
@@ -135,7 +136,8 @@ func (a *App) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			w.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return
 		}
-		userID := claims["userId"]
+		userID := int(claims["userId"].(float64))
+		fmt.Println(reflect.TypeOf(userID))
 		context := context.WithValue(r.Context(), "userId", userID)
 		next.ServeHTTP(w, r.WithContext(context))
 	})
