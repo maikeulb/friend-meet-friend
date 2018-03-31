@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -8,23 +9,15 @@ import (
 
 var SIGN_KEY = []byte("s3cr3t")
 
-type CustomClaims struct {
-	sub string
-	jwt.StandardClaims
-}
-
-type Authable interface {
-	Decode(token string) (*CustomClaims, error)
-	Encode(sub string) (string, error)
-}
-
-func ParseToken(tokenString string) (*CustomClaims, error) {
-
-	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenString string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
 		return SIGN_KEY, nil
 	})
 
-	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	} else {
 		return nil, err
@@ -33,17 +26,11 @@ func ParseToken(tokenString string) (*CustomClaims, error) {
 
 func GenerateToken(user *User) error {
 
-	expireToken := time.Now().Add(time.Hour * 24).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "sub": user.Username,
+		"exp": time.Now().Add(time.Hour * 5).Unix(),
+	})
 
-	claims := CustomClaims{
-		user.Username,
-		jwt.StandardClaims{
-			ExpiresAt: expireToken,
-			Issuer:    "go.micro.srv.user",
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(SIGN_KEY)
 	if err != nil {
 		return err

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	// "time"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/maikeulb/friend-meet-friend/app/auth"
@@ -54,7 +54,7 @@ func (a *App) Run(addr string) {
 func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/api/login", a.LoginUser).Methods("POST")
 	a.Router.HandleFunc("/api/register", a.RegisterUser).Methods("POST")
-	a.Router.HandleFunc("/api/status", a.Status)
+	a.Router.HandleFunc("/api/status", a.ValidationMiddleware(a.Status))
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.UpdateUser).Methods("PUT")
@@ -64,20 +64,6 @@ func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/follow", a.FollowUser).Methods("POST")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/unfollow", a.UnFollowUser).Methods("POST")
-	a.Router.Use(a.AddContextMiddleware)
-}
-
-func (a *App) AddContextMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Method, "-", r.RequestURI)
-		cookie, _ := r.Cookie("username")
-		if cookie != nil {
-			ctx := context.WithValue(r.Context(), "Username", cookie.Value)
-			next.ServeHTTP(w, r.WithContext(ctx))
-		} else {
-			next.ServeHTTP(w, r)
-		}
-	})
 }
 
 func (a *App) GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -124,12 +110,6 @@ func (a *App) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	auth.RegisterUser(a.DB, w, r)
 }
 
-// func (a *App) Login(w http.ResponseWriter, r *http.Request) {
-// 	expiration := time.Now().Add(365 * 24 * time.Hour)
-// 	cookie := http.Cookie{Name: "username", Value: "demo@gmail.com", Expires: expiration}
-// 	http.SetCookie(w, &cookie)
-// }
-
 func (a *App) Status(w http.ResponseWriter, r *http.Request) {
 	if username := r.Context().Value("Username"); username != nil {
 		w.WriteHeader(http.StatusOK)
@@ -138,4 +118,27 @@ func (a *App) Status(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Not Logged in"))
 	}
+}
+
+func (a *App) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tokenString := r.Header.Get("Authorization")
+		if len(tokenString) == 0 {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("Missing Authorization Header"))
+			return
+		}
+		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
+		claims, err := auth.ParseToken(tokenString)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			return
+		}
+		fmt.Println(claims)
+		username := claims["sub"]
+		fmt.Println(username)
+		context := context.WithValue(r.Context(), "Username", username)
+		next.ServeHTTP(w, r.WithContext(context))
+	})
 }
