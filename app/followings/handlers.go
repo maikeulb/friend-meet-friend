@@ -12,8 +12,7 @@ import (
 
 func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	followerID := 4
-
+	followerID := r.Context().Value("userId").(int)
 	followeeID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")
@@ -31,8 +30,7 @@ func Follow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func UnFollow(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	followerID := 4
-
+	followerID := r.Context().Value("userId").(int)
 	followeeID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Profile ID")

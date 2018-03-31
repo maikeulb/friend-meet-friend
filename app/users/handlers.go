@@ -51,12 +51,16 @@ func GetUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, user)
 }
 
-func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) { // isn't working right
+func UpdateUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
+	currentUserID := r.Context().Value("userId")
 	userID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+	if currentUserID != userID {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 

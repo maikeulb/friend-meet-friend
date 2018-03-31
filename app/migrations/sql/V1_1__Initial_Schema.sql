@@ -1,7 +1,7 @@
 CREATE TABLE users (
     id serial PRIMARY KEY,
     email varchar(50) NOT NULL,
-    nickname varchar(50) NULL,
+    name varchar(50) NULL,
     password_hash bytea NULL,
     interests TEXT NULL,
     borough varchar(50) NULL,

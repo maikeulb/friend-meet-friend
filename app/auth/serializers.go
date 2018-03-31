@@ -2,8 +2,8 @@ package auth
 
 import (
 	"errors"
-	// "time"
 	"strings"
+	// "time"
 )
 
 type UserRequest struct {
@@ -21,19 +21,19 @@ func (ju UserRequest) User() User {
 
 func (ju *UserRequest) validate() error {
 	if ju.Email <= "" {
-	    return errors.New("Email should not be empty")
+		return errors.New("Email should not be empty")
 	}
 	if ju.Password <= "" {
-   	    return errors.New("Password should not be empty")
+		return errors.New("Password should not be empty")
 	}
-    // UPDATE Last-active
+	// UPDATE Last-active
 	return nil
 }
 
 type UserResponse struct {
-	ID       int    `json:"id,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Token    string `json:"token,omitempty"`
+	ID    int    `json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 func Response(u User) UserResponse {

@@ -13,9 +13,9 @@ func GetMessageForUser(db *sql.DB, m *Message, userID int) error {
         m.body,
         m.timestamp,
         u.id,
-        u.username,
+        u.name,
         u2.id,
-        u2.username
+        u2.name
         FROM messages as m
         INNER JOIN users as u
         ON m.recipient_id = u.id
@@ -28,9 +28,9 @@ func GetMessageForUser(db *sql.DB, m *Message, userID int) error {
 		&m.Body,
 		&m.Timestamp,
 		&m.Recipient.ID,
-		&m.Recipient.Username,
+		&m.Recipient.Name,
 		&m.Sender.ID,
-		&m.Sender.Username)
+		&m.Sender.Name)
 }
 
 func GetSentMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message, error) {
@@ -39,7 +39,7 @@ func GetSentMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message, err
         m.body,
         m.timestamp,
         u.id,
-        u.username
+        u.name
         FROM messages as m
         INNER JOIN users as u
         ON m.recipient_id = u.id
@@ -62,7 +62,7 @@ func GetSentMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message, err
 			&m.Body,
 			&m.Timestamp,
 			&m.Recipient.ID,
-			&m.Recipient.Username); err != nil {
+			&m.Recipient.Name); err != nil {
 			return nil, err
 		}
 		messages = append(messages, m)
@@ -76,7 +76,7 @@ func GetRecievedMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message,
         m.body,
         m.timestamp,
         u.id,
-        u.username
+        u.name
         FROM messages as m
         INNER JOIN users as u
         ON m.sender_id = u.id
@@ -100,7 +100,7 @@ func GetRecievedMessagesForUser(db *sql.DB, m []Message, userID int) ([]Message,
 			&m.Body,
 			&m.Timestamp,
 			&m.Sender.ID,
-			&m.Sender.Username); err != nil {
+			&m.Sender.Name); err != nil {
 			return nil, err
 		}
 		messages = append(messages, m)

@@ -42,28 +42,28 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
-	fmt.Println("/api/users/{userId}/messages")
-	fmt.Println("/api/users/{userId}/messages/{id}")
-	fmt.Println("/api/users/{userId}/messages/sent")
-	fmt.Println("/api/users/{userId}/messages/recieved")
-	fmt.Println("/api/users/{userId}/follow")
-	fmt.Println("/api/users/{userId}/unfollow")
+	fmt.Println("/api/users/{userId}/messages-protected")
+	fmt.Println("/api/users/{userId}/messages/{id}-protected")
+	fmt.Println("/api/users/{userId}/messages/sent-protected")
+	fmt.Println("/api/users/{userId}/messages/recieved-protected")
+	fmt.Println("/api/users/{userId}/follow-protected")
+	fmt.Println("/api/users/{userId}/unfollow-protected")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
 func (a *App) InitializeRoutes() {
 	a.Router.HandleFunc("/api/login", a.LoginUser).Methods("POST")
 	a.Router.HandleFunc("/api/register", a.RegisterUser).Methods("POST")
-	a.Router.HandleFunc("/api/status", a.ValidationMiddleware(a.Status))
+	a.Router.HandleFunc("/api/status", a.Status)
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.UpdateUser).Methods("PUT")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages", a.SendUserMessage).Methods("POST")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.GetUserMessage).Methods("GET")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.GetUserSentMessages).Methods("GET")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.GetUserRecievedMessages).Methods("GET")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/follow", a.FollowUser).Methods("POST")
-	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/unfollow", a.UnFollowUser).Methods("POST")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.ValidationMiddleware(a.UpdateUser)).Methods("PUT")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages", a.ValidationMiddleware(a.SendUserMessage)).Methods("POST")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/{id:[0-9]+}", a.ValidationMiddleware(a.GetUserMessage)).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/sent", a.ValidationMiddleware(a.GetUserSentMessages)).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/messages/recieved", a.ValidationMiddleware(a.GetUserRecievedMessages)).Methods("GET")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/follow", a.ValidationMiddleware(a.FollowUser)).Methods("POST")
+	a.Router.HandleFunc("/api/users/{userId:[0-9]+}/unfollow", a.ValidationMiddleware(a.UnFollowUser)).Methods("POST")
 }
 
 func (a *App) GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -111,9 +111,9 @@ func (a *App) RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Status(w http.ResponseWriter, r *http.Request) {
-	if username := r.Context().Value("Username"); username != nil {
+	if email := r.Context().Value("email"); email != nil {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello " + username.(string) + "\n"))
+		w.Write([]byte("Hello " + email.(string) + "\n"))
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Not Logged in"))
@@ -135,10 +135,8 @@ func (a *App) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			w.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return
 		}
-		fmt.Println(claims)
-		username := claims["sub"]
-		fmt.Println(username)
-		context := context.WithValue(r.Context(), "Username", username)
+		userID := claims["userId"]
+		context := context.WithValue(r.Context(), "userId", userID)
 		next.ServeHTTP(w, r.WithContext(context))
 	})
 }

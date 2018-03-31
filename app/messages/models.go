@@ -18,7 +18,7 @@ type Message struct {
 
 type MessageUser struct {
 	ID       int
-	Username string
+	Name string
 }
 
 type MessagesSent struct {

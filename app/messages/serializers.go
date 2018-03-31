@@ -48,19 +48,19 @@ func Response(m Message) MessageResponse {
 	jm.Body = m.Body
 	jm.Timestamp = m.Timestamp
 	jm.Sender.ID = m.Sender.ID
-	jm.Sender.Username = m.Sender.Username
+	jm.Sender.Name = m.Sender.Name
 	jm.Recipient.ID = m.Recipient.ID
-	jm.Recipient.Username = m.Recipient.Username
+	jm.Recipient.Name = m.Recipient.Name
 
 	return jm
 }
 
 type MessageSenderResponse struct {
 	ID       int    `json:"id,omitempty"`
-	Username string `json:"username,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type MessageRecipientResponse struct {
 	ID       int    `json:"id,omitempty"`
-	Username string `json:"username,omitempty"`
+	Name string `json:"name,omitempty"`
 }

@@ -4,22 +4,20 @@ import (
 	"database/sql"
 	// "fmt"
 	_ "github.com/lib/pq"
-	// "log"
 )
 
 func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
 	query := `
         SELECT u.id,
-        u.username,
-        u.email,
+        u.name,
         u.interests,
         u.borough,
         u.created_on,
         u.last_active,
         f.follower_id,
-        u2.username,
+        u2.name,
         f.followee_id,
-        u3.username
+        u3.name
         FROM users as u
         INNER JOIN followings as f
         ON u.id = f.follower_id
@@ -49,16 +47,15 @@ func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
 		var u3 = Followees{}
 		if err := rows.Scan(
 			&u.ID,
-			&u.Username,
-			&u.Email,
+			&u.Name,
 			&u.Interests,
 			&u.Borough,
 			&u.CreatedOn,
 			&u.LastActive,
 			&u2.ID,
-			&u2.Username,
+			&u2.Name,
 			&u3.ID,
-			&u3.Username); err != nil {
+			&u3.Name); err != nil {
 			return nil, err
 		}
 
@@ -86,16 +83,15 @@ func GetUserProfiles(db *sql.DB, u []User) ([]User, error) {
 func GetUserProfile(db *sql.DB, u User) (User, error) {
 	query := `
         SELECT u.id,
-        u.username,
-        u.email,
+        u.name,
         u.interests,
         u.borough,
         u.created_on,
         u.last_active,
         f.follower_id,
-        u2.username,
+        u2.name,
         f.followee_id,
-        u3.username
+        u3.name
         FROM users as u
         INNER JOIN followings as f
         ON u.id = f.follower_id
@@ -110,16 +106,15 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 	var u3 = Followees{}
 	err := db.QueryRow(query, u.ID).Scan(
 		&u.ID,
-		&u.Username,
-		&u.Email,
+		&u.Name,
 		&u.Interests,
 		&u.Borough,
 		&u.CreatedOn,
 		&u.LastActive,
 		&u2.ID,
-		&u2.Username,
+		&u2.Name,
 		&u3.ID,
-		&u3.Username)
+		&u3.Name)
 
 	u.Followers = append(u.Followers, u2)
 	u.Followees = append(u.Followees, u3)
@@ -137,8 +132,8 @@ func GetUserProfile(db *sql.DB, u User) (User, error) {
 func UpdateUserProfile(db *sql.DB, u *User) error {
 	command := `
         UPDATE users as u
-        SET email=case
-                when $1='' then u.email
+        SET name=case
+                when $1='' then u.name
                 else $1
             end,
             interests=case
@@ -151,7 +146,7 @@ func UpdateUserProfile(db *sql.DB, u *User) error {
             end
         WHERE id = $4;`
 
-	_, err := db.Exec(command, u.Email, u.Interests, u.Borough, u.ID)
+	_, err := db.Exec(command, u.Name, u.Interests, u.Borough, u.ID)
 	if err != nil {
 		return err
 	}

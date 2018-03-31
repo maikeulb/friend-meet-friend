@@ -11,3 +11,9 @@ crud
   -read
   -update (not supported
       -delete (not supported)
+
+      prevent user from sending messages to them selvs
+      prevent user from following themselves
+      check all status's
+
+      set timestamp

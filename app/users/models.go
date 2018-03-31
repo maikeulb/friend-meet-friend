@@ -2,33 +2,31 @@ package users
 
 import (
 	"encoding/json"
-	// "errors"
 	"fmt"
-	// "golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type User struct {
-	ID           int
-	Username     string
-	Email        string
-	PasswordHash []byte
-	Interests    string
-	Borough      string
-	CreatedOn    *time.Time
-	LastActive   *time.Time
-	Followers    []Followers
-	Followees    []Followees
+	ID   int
+	Name string
+	// Email        string
+	// PasswordHash []byte
+	Interests  string
+	Borough    string
+	CreatedOn  *time.Time
+	LastActive *time.Time
+	Followers  []Followers
+	Followees  []Followees
 }
 
 type Followers struct {
-	ID       int
-	Username string
+	ID   int
+	Name string
 }
 
 type Followees struct {
-	ID       int
-	Username string
+	ID   int
+	Name string
 }
 
 func (u User) MarshalJSON() ([]byte, error) {

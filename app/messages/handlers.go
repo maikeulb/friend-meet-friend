@@ -3,7 +3,7 @@ package messages
 import (
 	"database/sql"
 	"encoding/json"
-	// "fmt"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -12,22 +12,23 @@ import (
 )
 
 func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
+	currentUserID := r.Context().Value("userId")
+	fmt.Println(currentUserID)
 	userID, err := strconv.Atoi(vars["userId"])
+	fmt.Println(userID)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-
-	// userID := 2 // get from context
-	// if err != nil {
-	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-	//  return
-	// } compare with userID
+	fmt.Println(currentUserID)
+	fmt.Println(userID)
+	// if currentUserID.(int) != userID.(int) {
+	// respondWithError(w, http.StatusForbidden, "Forbidden")
+	// return
+	// }
 
 	var m []Message
-
 	messages, err := GetSentMessagesForUser(db, m, userID)
 	if err != nil {
 		switch err {
@@ -43,19 +44,17 @@ func GetSentMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
+	currentUserID := r.Context().Value("userId")
 	userID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-
-	// userID := 2 // get from context
-	// if err != nil {
-	//  respondWithError(w, http.StatusBadRequest, "Invalid message ID")
-	//  return
-	// } compare with userID
+	if currentUserID != userID {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
+		return
+	}
 
 	var m []Message
 	messages, err := GetRecievedMessagesForUser(db, m, userID)
@@ -72,12 +71,15 @@ func GetRecievedMessages(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	// userID := 2 // get from context
-
 	vars := mux.Vars(r)
+	currentUserID := r.Context().Value("userId")
 	userID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+	if currentUserID != userID {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 	id, err := strconv.Atoi(vars["id"])
@@ -98,10 +100,14 @@ func GetMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
+	currentUserID := r.Context().Value("userId")
 	userID, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+	if currentUserID != userID {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 
@@ -116,8 +122,8 @@ func SendMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if err := SendMessageToUser(db, m); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
-
 	}
+
 	respondWithJSON(w, http.StatusCreated, m)
 }
 

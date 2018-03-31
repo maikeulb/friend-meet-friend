@@ -20,7 +20,7 @@ func (ju UserRequest) User() User {
 
 func (ju *UserRequest) validate() error {
 	// if ju.Interests <= "" {
-	// return errors.New("Username should not be empty")
+	// return errors.New("Name should not be empty")
 	// }
 	// if ju.Boroughs <= "" {
 	// return errors.New("Body should not be empty")
@@ -31,8 +31,8 @@ func (ju *UserRequest) validate() error {
 
 type UserResponse struct {
 	ID         int                 `json:"id,omitempty"`
-	Username   string              `json:"username,omitempty"`
-	Email      string              `json:"email,omitempty"`
+	Name       string              `json:"name,omitempty"`
+	// Email      string              `json:"email,omitempty"`
 	Interests  string              `json:"interests,omitempty"`
 	Borough    string              `json:"borough,omitempty"`
 	CreatedOn  *time.Time          `json:"createdOn,omitempty"`
@@ -44,8 +44,8 @@ type UserResponse struct {
 func Response(u User) UserResponse {
 	var ju UserResponse
 	ju.ID = u.ID
-	ju.Username = u.Username
-	ju.Email = u.Email
+	ju.Name = u.Name
+	// ju.Email = u.Email
 	ju.Interests = u.Interests
 	ju.Borough = u.Borough
 	ju.CreatedOn = u.CreatedOn
@@ -55,8 +55,8 @@ func Response(u User) UserResponse {
 	for _, follower := range u.Followers {
 		juFollowers = append(juFollowers,
 			FollowersResponse{
-				ID:       follower.ID,
-				Username: follower.Username,
+				ID:   follower.ID,
+				Name: follower.Name,
 			})
 	}
 	ju.Followers = juFollowers
@@ -65,8 +65,8 @@ func Response(u User) UserResponse {
 	for _, followee := range u.Followees {
 		juFollowees = append(juFollowees,
 			FolloweesResponse{
-				ID:       followee.ID,
-				Username: followee.Username,
+				ID:   followee.ID,
+				Name: followee.Name,
 			})
 	}
 	ju.Followees = juFollowees
@@ -75,11 +75,11 @@ func Response(u User) UserResponse {
 }
 
 type FollowersResponse struct {
-	ID       int    `json:"id,omitempty"`
-	Username string `json:"username,omitempty"`
+	ID   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type FolloweesResponse struct {
-	ID       int    `json:"id,omitempty"`
-	Username string `json:"username,omitempty"`
+	ID   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }

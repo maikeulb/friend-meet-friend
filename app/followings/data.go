@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	// "fmt"
 	_ "github.com/lib/pq"
-	// "log"
 )
 
 func AddFollowing(db *sql.DB, f *Following) error {
