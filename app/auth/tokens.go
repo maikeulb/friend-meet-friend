@@ -26,7 +26,7 @@ func ParseToken(tokenString string) (jwt.MapClaims, error) {
 
 func GenerateToken(user *User) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-        "sub": user.Username,
+        "sub": user.Email,
 		"exp": time.Now().Add(time.Hour * 5).Unix(),
 	})
 

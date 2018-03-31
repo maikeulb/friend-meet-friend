@@ -1,4 +1,4 @@
-INSERT INTO users (username, email, password_hash, interests, borough) VALUES
+INSERT INTO users (nickname, email, password_hash, interests, borough) VALUES
 ('michael', 'michael@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'museums', 'queens'),
 ('mick','jake@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'bmx bikes', 'manhattan'),
 ('marco','marco@email.com','$2a$10$5kDwYNJsKpQf00fGbAyEs.JeSGfn8GL7SgbgbGppAT8tD8K40iyjq', 'movies', 'queens'),

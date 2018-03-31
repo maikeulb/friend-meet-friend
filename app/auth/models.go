@@ -10,8 +10,6 @@ import (
 
 type User struct {
 	ID           int
-	Username     string
-    // UPDATE change username to nickname and make it optionsl
 	Email        string
 	Token        string
 	Password     string

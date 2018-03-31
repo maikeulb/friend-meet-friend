@@ -7,14 +7,12 @@ import (
 )
 
 type UserRequest struct {
-	Username string
 	Email    string
 	Password string
 }
 
 func (ju UserRequest) User() User {
 	var u User
-	u.Username = strings.ToLower(ju.Username)
 	u.Email = strings.ToLower(ju.Email)
 	u.Password = ju.Password
 
@@ -34,7 +32,6 @@ func (ju *UserRequest) validate() error {
 
 type UserResponse struct {
 	ID       int    `json:"id,omitempty"`
-	Username string `json:"username,omitempty"`
 	Email    string `json:"email,omitempty"`
 	Token    string `json:"token,omitempty"`
 }
@@ -42,7 +39,6 @@ type UserResponse struct {
 func Response(u User) UserResponse {
 	var ju UserResponse
 	ju.ID = u.ID
-	ju.Username = u.Username
 	ju.Email = u.Email
 	ju.Token = u.Token
 

@@ -55,10 +55,6 @@ func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusUnprocessableEntity, "Email already exists")
 		return
 	}
-	if exists, _ := IsUsernameExists(db, u); exists {
-		respondWithError(w, http.StatusUnprocessableEntity, "Username already exists")
-		return
-	}
 
 	if err := u.SetPassword(); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
