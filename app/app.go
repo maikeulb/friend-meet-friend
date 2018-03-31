@@ -1,13 +1,10 @@
 package app
 
 import (
-	// "context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	// "reflect"
-	// "strings"
 
 	"github.com/gorilla/mux"
 	"github.com/maikeulb/friend-meet-friend/app/auth"
@@ -43,12 +40,12 @@ func (a *App) Run(addr string) {
 	fmt.Println("/api/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
-	fmt.Println("/api/users/{userId}/messages-protected-broken")
-	fmt.Println("/api/users/{userId}/messages/{id}-protected")
-	fmt.Println("/api/users/{userId}/messages/sent-protected")
-	fmt.Println("/api/users/{userId}/messages/recieved-protected")
-	fmt.Println("/api/users/{userId}/follow-protected ok")
-	fmt.Println("/api/users/{userId}/unfollow-protected ok")
+	fmt.Println("/api/users/{userId}/messages")
+	fmt.Println("/api/users/{userId}/messages/{id}")
+	fmt.Println("/api/users/{userId}/messages/sent")
+	fmt.Println("/api/users/{userId}/messages/recieved")
+	fmt.Println("/api/users/{userId}/follow")
+	fmt.Println("/api/users/{userId}/unfollow")
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 

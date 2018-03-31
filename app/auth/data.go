@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	// "fmt"
+
 	_ "github.com/lib/pq"
 )
 

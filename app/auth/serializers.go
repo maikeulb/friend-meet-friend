@@ -3,7 +3,6 @@ package auth
 import (
 	"errors"
 	"strings"
-	// "time"
 )
 
 type UserRequest struct {

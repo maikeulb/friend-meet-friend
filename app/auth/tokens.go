@@ -8,7 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var SIGN_KEY = []byte("s3cr3t") // move to environmental variable
+var SIGN_KEY = []byte("s3cr3t")
 
 func ParseToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

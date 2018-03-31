@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	// "errors"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
