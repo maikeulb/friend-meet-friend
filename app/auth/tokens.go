@@ -31,7 +31,7 @@ func ParseToken(tokenString string) (*CustomClaims, error) {
 	}
 }
 
-func GenerateToken(user User) (string, error) {
+func GenerateToken(user *User) error {
 
 	expireToken := time.Now().Add(time.Hour * 24).Unix()
 
@@ -44,6 +44,11 @@ func GenerateToken(user User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(SIGN_KEY)
+	if err != nil {
+		return err
+	}
+	user.Token = tokenString
 
-	return token.SignedString(SIGN_KEY)
+	return nil
 }

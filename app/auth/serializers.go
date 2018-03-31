@@ -1,9 +1,10 @@
 package auth
 
-// import (
+import (
 // "errors"
 // "time"
-// )
+"strings"
+)
 
 type UserRequest struct {
 	Username string
@@ -13,8 +14,8 @@ type UserRequest struct {
 
 func (ju UserRequest) User() User {
 	var u User
-	u.Username = ju.Username
-	u.Email = ju.Email
+	u.Username = strings.ToLower(ju.Username)
+	u.Email = strings.ToLower(ju.Email)
 	u.SetPassword(ju.Password)
 
 	return u
@@ -41,6 +42,7 @@ type UserResponse struct {
 	ID       int    `json:"id,omitempty"`
 	Username string `json:"username,omitempty"`
 	Email    string `json:"email,omitempty"`
+	Token    string `json:"token,omitempty"`
 }
 
 func Response(u User) UserResponse {
@@ -48,6 +50,7 @@ func Response(u User) UserResponse {
 	ju.ID = u.ID
 	ju.Username = u.Username
 	ju.Email = u.Email
+	ju.Token = u.Token
 
 	return ju
 }

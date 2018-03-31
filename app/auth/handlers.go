@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	// "fmt"
 	"net/http"
-	"strings"
+	// "strings"
 	// "strconv"
 
 	// "github.com/gorilla/mux"
@@ -13,15 +13,15 @@ import (
 )
 
 func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	email := "michael@email.com"
-	password := "P@ssw0rd!"
+	email := "mickjag@email.com"
+	password := "P@ssw3rd!"
 
-	u := &User{Email: strings.ToLower(email)} // move ToLower in request marshalling
+	u := &User{Email: email}
 	err := GetUser(db, u)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			respondWithError(w, http.StatusNotFound, err.Error())
+			respondWithError(w, http.StatusForbidden, err.Error())
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -29,51 +29,59 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := u.CheckPassword(password); err != nil {
+		respondWithError(w, http.StatusForbidden, err.Error())
+		return
+	}
+	if err := GenerateToken(u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
-	tokenString, err := GenerateToken(*u)
-	if err != nil {
-		return err
-	}
-
-	respondWithJSON(w, http.StatusOK, tokenString)
+	respondWithJSON(w, http.StatusOK, u)
 }
 
 func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	email := "fico@email.com"
-	username := "fico"
-	password := "P@ssw0rd!"
+	email := "mickjag@email.com"
+	username := "mickjag"
+	password := "P@ssw3rd!"
 
-	u := User{Email: strings.ToLower(email), Username: strings.ToLower(username)} // move tolower to request logic
+	u := User{Email: email, Username: username}
 
-	//make more slick || better status codes
 	var err error
 	exists, err := IsEmailExists(db, u)
 	if exists {
-		respondWithError(w, http.StatusInternalServerError, "Email already exists")
+		respondWithError(w, http.StatusUnprocessableEntity, "Email already exists")
+		return
 	}
+	if err != nil {
+		respondWithError(w, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
 	exists, err = IsUsernameExists(db, u)
 	if exists {
-		respondWithError(w, http.StatusInternalServerError, "Username already exists")
+		respondWithError(w, http.StatusUnprocessableEntity, "Username already exists")
+		return
+	}
+	if err != nil {
+		respondWithError(w, http.StatusUnprocessableEntity, err.Error())
+		return
 	}
 
-	//combine the two, auto save password with saveuser
-	u.SetPassword(password) //figure out how to error handle this
-	if err != nil {
+	if err := u.SetPassword(password); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
-	err = SaveUser(db, &u)
-	if err != nil {
+	if err := SaveUser(db, &u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if err := GenerateToken(&u); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
-	tokenString, err := GenerateToken(*u)
-	if err != nil {
-		return err
-	}
-
-	respondWithJSON(w, http.StatusOK, tokenString) // add token here to user object
+	respondWithJSON(w, http.StatusOK, u) // add token here to user object
 }
 
 // lgout todo

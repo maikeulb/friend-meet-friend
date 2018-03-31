@@ -31,11 +31,6 @@ type Followees struct {
 	Username string
 }
 
-// type Following struct {
-// 	FollowerID int
-// 	FolloweeID int
-// }
-
 func (u User) MarshalJSON() ([]byte, error) {
 	fmt.Println("marshalling")
 	return json.Marshal(Response(u))
@@ -55,22 +50,3 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	*u = ju.User()
 	return nil
 }
-
-// func (u *User) CheckPassword(password string) error {
-// 	bytePassword := []byte(password)
-// 	byteHashedPassword := []byte(u.PasswordHash)
-// 	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
-// }
-
-// func (u *User) SetPassword(password string) error {
-// 	if len(password) == 0 {
-// 		return errors.New("password should not be empty!")
-// 	}
-// 	bytePassword := []byte(password)
-// 	passwordHash, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	u.PasswordHash = passwordHash
-// 	return nil
-// }

@@ -12,6 +12,7 @@ type User struct {
 	ID           int
 	Username     string
 	Email        string
+	Token        string
 	PasswordHash []byte
 	CreatedOn    *time.Time
 	LastActive   *time.Time
