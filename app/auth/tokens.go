@@ -7,7 +7,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var SIGN_KEY = []byte("s3cr3t")
+var SIGN_KEY = []byte("s3cr3t") // move to environmental variable
 
 func ParseToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -25,7 +25,6 @@ func ParseToken(tokenString string) (jwt.MapClaims, error) {
 }
 
 func GenerateToken(user *User) error {
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
         "sub": user.Username,
 		"exp": time.Now().Add(time.Hour * 5).Unix(),

@@ -6,17 +6,19 @@ import (
 	// "fmt"
 	"net/http"
 	// "strings"
-	// "strconv"
 
-	// "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
 func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	email := "mickjag@email.com"
-	password := "P@ssw3rd!"
+	var u *User
+	defer r.Body.Close()
 
-	u := &User{Email: email}
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	err := GetUser(db, u)
 	if err != nil {
 		switch err {
@@ -28,7 +30,7 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := u.CheckPassword(password); err != nil {
+	if err := u.CheckPassword(); err != nil {
 		respondWithError(w, http.StatusForbidden, err.Error())
 		return
 	}
@@ -41,37 +43,28 @@ func LoginUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	email := "mickjag@email.com"
-	username := "mickjag"
-	password := "P@ssw3rd!"
+	var u User
+	defer r.Body.Close()
 
-	u := User{Email: email, Username: username}
-
-	var err error
-	exists, err := IsEmailExists(db, u)
-	if exists {
-		respondWithError(w, http.StatusUnprocessableEntity, "Email already exists")
-		return
-	}
-	if err != nil {
-		respondWithError(w, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-
-	exists, err = IsUsernameExists(db, u)
-	if exists {
-		respondWithError(w, http.StatusUnprocessableEntity, "Username already exists")
-		return
-	}
-	if err != nil {
-		respondWithError(w, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-
-	if err := u.SetPassword(password); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	if exists, _ := IsEmailExists(db, u); exists {
+		respondWithError(w, http.StatusUnprocessableEntity, "Email already exists")
+		return
+	}
+	if exists, _ := IsUsernameExists(db, u); exists {
+		respondWithError(w, http.StatusUnprocessableEntity, "Username already exists")
+		return
+	}
+
+	if err := u.SetPassword(); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	if err := SaveUser(db, &u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -81,12 +74,12 @@ func RegisterUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, u) // add token here to user object
+	respondWithJSON(w, http.StatusOK, u)
 }
 
-// lgout todo
-// refresh todo
-// dummy resource
+// TODO: logout
+// TODO: refresh
+
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }

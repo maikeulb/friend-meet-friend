@@ -11,8 +11,10 @@ import (
 type User struct {
 	ID           int
 	Username     string
+    // UPDATE change username to nickname and make it optionsl
 	Email        string
 	Token        string
+	Password     string
 	PasswordHash []byte
 	CreatedOn    *time.Time
 	LastActive   *time.Time
@@ -38,14 +40,14 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (u *User) CheckPassword(password string) error {
-	bytePassword := []byte(password)
+func (u *User) CheckPassword() error {
+	bytePassword := []byte(u.Password)
 	byteHashedPassword := []byte(u.PasswordHash)
 	return bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
 }
 
-func (u *User) SetPassword(password string) error {
-	bytePassword := []byte(password)
+func (u *User) SetPassword() error {
+	bytePassword := []byte(u.Password)
 	passwordHash, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
 	if err != nil {
 		return err
