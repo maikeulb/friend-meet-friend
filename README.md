@@ -117,8 +117,8 @@ docker-compose up
 Go to http://localhost:5000 and visit one of the above endpoints
 ```
 
-Otherwise, create a database, run the migration scripts,  then open `main.go`
-and point the PostgreSQL variables to your server,
+Otherwise, create a database, run the migration scripts, and then open `main.go`
+and point the PostgreSQL URI to your server,
 
 After all that has been taken care of,
 ```
@@ -129,5 +129,6 @@ Go to http://localhost:5000 and visit one of the above endpoints
 
 TODO
 ----
-* Update last active timestamp upon user login
-* Add more tests
+Update last active timestamp upon user login  
+Add unit tests  
+Add an eloquent config management package

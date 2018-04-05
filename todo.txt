@@ -1,2 +1,0 @@
-crud
--clean up config files
