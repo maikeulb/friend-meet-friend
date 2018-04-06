@@ -28,13 +28,13 @@ Endpoints
 ### Auth
 | Method     | URI                                   | Action                                    |
 |------------|---------------------------------------|-------------------------------------------|
-| `GET`      | `/api/status`                         | `Check Login Status `                     |
-| `POST`     | `/api/login`                          | `Login User`                              |
-| `POST`     | `/api/register`                       | `Register User`                           |
+| `GET`      | `/auth/status`                         | `Check Login Status `                     |
+| `POST`     | `/auth/login`                          | `Login User`                              |
+| `POST`     | `/auth/register`                       | `Register User`                           |
 
 Sample Usage
 ---------------
-`http post localhost:5000/api/register email=user@email.com username=user password=pass`
+`http post localhost:5000/auth/register email=user@email.com username=user password=pass`
 
 ```
 {
@@ -45,7 +45,7 @@ Sample Usage
 
 ```
 
-`http post localhost:5000/api/login email=user@email.com password=pass`
+`http post localhost:5000/auth/login email=user@email.com password=pass`
 ```
 {
     "email": "user@email.com", 
@@ -109,8 +109,8 @@ docker-compose up
 Go to http://localhost:5000 and visit one of the above endpoints
 ```
 
-Otherwise, create a database, run the migration scripts, and then open `main.go`
-and point the PostgreSQL URI to your server,
+Alternatively, create a database named 'friendmeetfriend', run the migration
+scripts, and then open `main.go` and point the PostgreSQL URI to your server,
 
 After all that has been taken care of,
 ```
@@ -124,3 +124,5 @@ TODO
 Update last active timestamp upon user login  
 Add unit tests  
 Add an eloquent config management package
+Add CORS
+Consider removing token after registration

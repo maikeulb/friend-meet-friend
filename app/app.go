@@ -35,9 +35,9 @@ func (a *App) Initialize(host, port, user, password, dbname string) {
 
 func (a *App) Run(addr string) {
 	fmt.Println("Listening on port: 5000")
-	fmt.Println("/api/login")
-	fmt.Println("/api/register")
-	fmt.Println("/api/status")
+	fmt.Println("/auth/login")
+	fmt.Println("/auth/register")
+	fmt.Println("/auth/status")
 	fmt.Println("/api/users")
 	fmt.Println("/api/users/{userId}")
 	fmt.Println("/api/users/{userId}/messages")
@@ -50,9 +50,9 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) InitializeRoutes() {
-	a.Router.HandleFunc("/api/login", a.LoginUser).Methods("POST")
-	a.Router.HandleFunc("/api/register", a.RegisterUser).Methods("POST")
-	a.Router.HandleFunc("/api/status", a.Status)
+	a.Router.HandleFunc("/auth/login", a.LoginUser).Methods("POST")
+	a.Router.HandleFunc("/auth/register", a.RegisterUser).Methods("POST")
+	a.Router.HandleFunc("/auth/status", a.Status)
 	a.Router.HandleFunc("/api/users", a.GetUsers).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.GetUser).Methods("GET")
 	a.Router.HandleFunc("/api/users/{userId:[0-9]+}", a.ValidationMiddleware(a.UpdateUser)).Methods("PATCH")
