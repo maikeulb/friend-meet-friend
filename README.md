@@ -18,18 +18,10 @@ Endpoints
 | `GET`      | `/api/users`                          | `Retrieve all user profiles`              |
 | `GET`      | `/api/users/{uid}`                    | `Retrieve user profile`                   |
 | `PATCH`    | `/api/users/{uid`                     | `Partially update logged in user's profile`         |
-
-### Messages
-| Method     | URI                                   | Action                                    |
-|------------|---------------------------------------|-------------------------------------------|
 | `GET`      | `/api/users/{uid}/messages/{id}`      | `Retrieve user message`                   |
 | `GET`      | `/api/users/{uid}/messages/sent`      | `Retrieve user's sent messages`           |
 | `GET`      | `/api/users/{uid}/messages/recieved`  | `Retrieve user's recieved messages`       |
 | `POST`     | `/api/users/{uid}/messages`           | `Send message to another user`            |
-
-### Following
-| Method     | URI                                   | Action                                    |
-|------------|---------------------------------------|-------------------------------------------|
 | `POST`     | `/api/users/{uid}/follow`             | `Follow user`                             |
 | `POST`     | `/api/users/{uid}/unfollow`           | `Unfollow user`                           |
 
