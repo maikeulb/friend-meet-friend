@@ -110,9 +110,9 @@ Go to http://localhost:5000 and visit one of the above endpoints
 ```
 
 Alternatively, create a database named 'friendmeetfriend', run the migration
-scripts, and then open `main.go` and point the PostgreSQL URI to your server,
+scripts (located in the `./migrations/`), and then open `main.go` and point the PostgreSQL URI to your server.
 
-After all that has been taken care of,
+`cd` into `./friend-meet-friend` (if you are not already) and run the following:
 ```
 go build
 ./friend-meet-friend
