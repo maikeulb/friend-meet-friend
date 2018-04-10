@@ -102,9 +102,10 @@ Sample Usage
 
 Run
 ---
-If you have docker installed,
+With docker:
 ```
 docker-compose build
+docker-compose up -d db
 docker-compose up
 Go to http://localhost:5000 and visit one of the above endpoints
 ```
@@ -112,7 +113,7 @@ Go to http://localhost:5000 and visit one of the above endpoints
 Alternatively, create a database named 'friendmeetfriend', run the migration
 scripts (located in the `./migrations/`), and then open `main.go` and point the PostgreSQL URI to your server.
 
-`cd` into `./friend-meet-friend` (if you are not already) and run the following:
+`cd` into `./friend-meet-friend` (if you are not already); then run:
 ```
 go build
 ./friend-meet-friend

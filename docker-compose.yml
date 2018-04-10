@@ -13,6 +13,7 @@ services:
       - DB_PASSWORD=P@ssw0rd!
       - DB_DB=postgres
     depends_on:
+      - flyway
       - db
 
   flyway:

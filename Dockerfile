@@ -8,7 +8,6 @@ RUN go get -u github.com/golang/dep/cmd/dep
 RUN dep init && dep ensure
 RUN CGO_ENABLED=0 GOOS=linux go build -o friend-meet-friend -a -installsuffix cgo main.go 
 
-
 FROM alpine:latest
 
 RUN mkdir /app
